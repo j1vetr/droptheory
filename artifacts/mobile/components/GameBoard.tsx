@@ -245,6 +245,7 @@ export default function GameBoard({
   }
 
   const fallingDestSet = new Set(fallingCells.map((fc) => `${fc.toRow},${fc.col}`));
+  const clearingSet = new Set(clearingCells.map((cc) => `${cc.row},${cc.col}`));
 
   return (
     <View style={[styles.boardOuter, boardShadow]}>
@@ -260,6 +261,7 @@ export default function GameBoard({
             const color = board[row][col];
             const ghost = ghostMap.get(key);
             const hiddenByFall = fallingDestSet.has(key);
+            const hiddenByClear = clearingSet.has(key);
 
             return (
               <View
@@ -267,14 +269,14 @@ export default function GameBoard({
                 style={[
                   styles.cell,
                   { width: cellSize, height: cellSize },
-                  color && !hiddenByFall
+                  color && !hiddenByFall && !hiddenByClear
                     ? [styles.filled, { backgroundColor: color }]
                     : styles.empty,
                   ghost !== undefined &&
                     (ghost ? styles.ghostValid : styles.ghostInvalid),
                 ]}
               >
-                {color && !hiddenByFall && (
+                {color && !hiddenByFall && !hiddenByClear && (
                   <>
                     <View style={styles.cellHighlight} />
                     <View style={styles.cellShadow} />

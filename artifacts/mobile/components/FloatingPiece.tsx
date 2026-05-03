@@ -8,11 +8,13 @@ interface Props {
   pageX: number;
   pageY: number;
   cellSize: number;
+  isValid?: boolean;
 }
 
-export default function FloatingPiece({ piece, pageX, pageY, cellSize }: Props) {
+export default function FloatingPiece({ piece, pageX, pageY, cellSize, isValid }: Props) {
   const bounds = getPieceBounds(piece.shape);
   const cells = new Set(piece.shape.map(([r, c]) => `${r - bounds.minRow},${c - bounds.minCol}`));
+  const invalid = isValid === false;
 
   return (
     <View
@@ -26,7 +28,7 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize }: Props) 
           top: pageY - cellSize * 0.5,
           width: bounds.cols * cellSize,
           height: bounds.rows * cellSize,
-          opacity: 0.95,
+          opacity: invalid ? 0.42 : 0.95,
           transform: [{ scale: 1.10 }],
         }}
       >

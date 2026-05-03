@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(200,169,110,0.28)",
   },
   text: {
-    fontSize: 22,
+    fontSize: 28,
     fontFamily: "Inter_700Bold",
     color: "#D4A83A",
     letterSpacing: 2.5,

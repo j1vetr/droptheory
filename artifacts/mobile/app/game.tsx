@@ -438,6 +438,7 @@ export default function GameScreen() {
           pageX={dragState.pageX}
           pageY={dragState.pageY}
           cellSize={cellSize}
+          isValid={dragState.isValid}
         />
       )}
 
