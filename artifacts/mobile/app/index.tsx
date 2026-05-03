@@ -4,17 +4,27 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
+const LOTTIE_DURATION_MS = 2500;
+const MIN_VISIBLE_MS = 2600;
+
 export default function SplashScreen() {
   const finishedRef = useRef(false);
+  const mountedAtRef = useRef<number>(Date.now());
+  const lottieRef = useRef<LottieView>(null);
 
   const goNext = () => {
     if (finishedRef.current) return;
+    const elapsed = Date.now() - mountedAtRef.current;
+    const remaining = Math.max(0, MIN_VISIBLE_MS - elapsed);
     finishedRef.current = true;
-    router.replace("/game");
+    setTimeout(() => router.replace("/game"), remaining);
   };
 
   useEffect(() => {
-    const fallback = setTimeout(goNext, 4200);
+    mountedAtRef.current = Date.now();
+    lottieRef.current?.reset();
+    lottieRef.current?.play();
+    const fallback = setTimeout(goNext, LOTTIE_DURATION_MS + 1500);
     return () => clearTimeout(fallback);
   }, []);
 
@@ -26,6 +36,7 @@ export default function SplashScreen() {
     >
       <StatusBar style="dark" />
       <LottieView
+        ref={lottieRef}
         source={require("../assets/animations/intro.json")}
         autoPlay
         loop={false}
