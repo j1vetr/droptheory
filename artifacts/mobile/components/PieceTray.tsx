@@ -1,5 +1,5 @@
 import React from "react";
-import { PanResponder, Platform, StyleSheet, Text, View } from "react-native";
+import { PanResponder, StyleSheet, Text, View } from "react-native";
 
 import PuffyBlock from "@/components/PuffyBlock";
 import { GamePiece, getPieceBounds } from "@/utils/pieces";
@@ -11,19 +11,9 @@ interface Props {
   cellSize: number;
 }
 
-const TRAY_CELL_SCALE = 0.6;
-export const TRAY_HEIGHT = 168;
-
-const slotShadow = Platform.select({
-  ios: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.28,
-    shadowRadius: 8,
-  },
-  android: { elevation: 5 },
-  default: {},
-});
+const TRAY_CELL_SCALE = 0.62;
+export const TRAY_HEIGHT = 158;
+const SLOT_HEIGHT = 118;
 
 function PiecePreview({
   piece,
@@ -84,10 +74,11 @@ export default function PieceTray({
         const piece = pieces[idx];
         const handlers = panHandlers[idx];
         const consumed = !piece;
+        const accentColor = piece ? piece.color : "rgba(255,255,255,0.18)";
         return (
           <View key={idx} style={styles.column}>
             <View
-              style={[styles.slot, slotShadow, consumed && styles.slotConsumed]}
+              style={styles.slot}
               {...(handlers && piece ? handlers : {})}
             >
               {piece ? (
@@ -100,21 +91,27 @@ export default function PieceTray({
                 <View style={styles.emptyDot} />
               )}
             </View>
-            <View style={styles.slotLabel}>
+            <View style={styles.labelRow}>
               <View
                 style={[
-                  styles.slotPip,
-                  consumed && styles.slotPipConsumed,
+                  styles.rule,
+                  { backgroundColor: consumed ? "rgba(255,255,255,0.06)" : accentColor },
                 ]}
               />
               <Text
                 style={[
                   styles.slotIndex,
-                  consumed && styles.slotIndexConsumed,
+                  { color: consumed ? "rgba(122,114,102,0.5)" : accentColor },
                 ]}
               >
-                {idx + 1}
+                0{idx + 1}
               </Text>
+              <View
+                style={[
+                  styles.rule,
+                  { backgroundColor: consumed ? "rgba(255,255,255,0.06)" : accentColor },
+                ]}
+              />
             </View>
           </View>
         );
@@ -122,8 +119,6 @@ export default function PieceTray({
     </View>
   );
 }
-
-const SLOT_HEIGHT = 130;
 
 const styles = StyleSheet.create({
   row: {
@@ -133,59 +128,42 @@ const styles = StyleSheet.create({
     width: "100%",
     height: TRAY_HEIGHT,
     paddingHorizontal: 4,
-    gap: 10,
+    gap: 14,
   },
   column: {
     flex: 1,
     alignItems: "center",
-    gap: 6,
+    gap: 10,
   },
   slot: {
     width: "100%",
     height: SLOT_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.035)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.07)",
-    borderRadius: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 6,
-  },
-  slotConsumed: {
-    backgroundColor: "rgba(255,255,255,0.018)",
-    borderColor: "rgba(255,255,255,0.05)",
   },
   emptyDot: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    borderWidth: 1.2,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1,
     borderColor: "rgba(255,255,255,0.10)",
     borderStyle: "dashed",
   },
-  slotLabel: {
+  labelRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingTop: 2,
+    gap: 8,
+    width: "100%",
+    paddingHorizontal: 6,
   },
-  slotPip: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: "#B07E28",
-  },
-  slotPipConsumed: {
-    backgroundColor: "rgba(255,255,255,0.10)",
+  rule: {
+    flex: 1,
+    height: 1,
+    opacity: 0.7,
   },
   slotIndex: {
-    fontSize: 9,
-    fontFamily: "Inter_600SemiBold",
-    color: "#7A7266",
-    letterSpacing: 2,
-  },
-  slotIndexConsumed: {
-    color: "rgba(122,114,102,0.4)",
+    fontSize: 10,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: 2.5,
   },
 });
