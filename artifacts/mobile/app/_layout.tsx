@@ -23,8 +23,6 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
-    Ionicons: require("../assets/fonts/Ionicons.ttf"),
-    MaterialCommunityIcons: require("../assets/fonts/MaterialCommunityIcons.ttf"),
   });
 
   useEffect(() => {

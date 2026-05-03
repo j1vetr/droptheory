@@ -1,5 +1,13 @@
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  Crown,
+  Gift,
+  type LucideIcon,
+  Play,
+  Settings as SettingsIcon,
+  Star,
+  Trophy,
+} from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -246,7 +254,7 @@ export default function MenuScreen() {
         onPress={() => router.push("/settings")}
         hitSlop={8}
       >
-        <Ionicons name="settings-outline" size={18} color="#7FE0CC" />
+        <SettingsIcon size={18} color="#7FE0CC" strokeWidth={2} />
       </Pressable>
 
       <ScrollView
@@ -257,11 +265,11 @@ export default function MenuScreen() {
         <View style={styles.hero}>
           {playIntro ? (
             <Animated.View entering={FadeInDown.duration(380)} style={styles.crownWrap}>
-              <MaterialCommunityIcons name="crown" size={26} color="#F2B84B" />
+              <Crown size={26} color="#F2B84B" fill="#F2B84B" strokeWidth={2} />
             </Animated.View>
           ) : (
             <View style={styles.crownWrap}>
-              <MaterialCommunityIcons name="crown" size={26} color="#F2B84B" />
+              <Crown size={26} color="#F2B84B" fill="#F2B84B" strokeWidth={2} />
             </View>
           )}
 
@@ -345,9 +353,9 @@ export default function MenuScreen() {
         </View>
 
         <View style={styles.footerTabs}>
-          <FooterTab icon="trophy-outline" label={t.leaderboard} />
-          <FooterTab icon="star-outline" label={t.dailyChallenge} badge />
-          <FooterTab icon="gift-outline" label={t.rewards} />
+          <FooterTab Icon={Trophy} label={t.leaderboard} />
+          <FooterTab Icon={Star} label={t.dailyChallenge} badge />
+          <FooterTab Icon={Gift} label={t.rewards} />
         </View>
       </ScrollView>
     </View>
@@ -368,7 +376,7 @@ function PrimaryButton({ label, onPress }: { label: string; onPress: () => void 
         style={styles.primaryBtnGradient}
       >
         <View style={styles.primaryBtnInner}>
-          <Ionicons name="play" size={20} color="#FFFFFF" />
+          <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={0} />
           <Text style={styles.primaryBtnText}>{label}</Text>
         </View>
       </LinearGradient>
@@ -377,18 +385,18 @@ function PrimaryButton({ label, onPress }: { label: string; onPress: () => void 
 }
 
 function FooterTab({
-  icon,
+  Icon,
   label,
   badge,
 }: {
-  icon: React.ComponentProps<typeof Ionicons>["name"];
+  Icon: LucideIcon;
   label: string;
   badge?: boolean;
 }) {
   return (
     <View style={styles.footerTab}>
       <View style={styles.footerIconWrap}>
-        <Ionicons name={icon} size={22} color="#8FC9D9" />
+        <Icon size={22} color="#8FC9D9" strokeWidth={2} />
         {badge && <View style={styles.footerBadge} />}
       </View>
       <Text style={styles.footerLabel}>{label.toUpperCase()}</Text>

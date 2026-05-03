@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { ChevronLeft } from "lucide-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
@@ -457,7 +457,7 @@ export default function GameScreen() {
 
       <View style={styles.header}>
         <Pressable onPress={handleBack} style={styles.iconBtn} hitSlop={6}>
-          <Ionicons name="chevron-back" size={22} color="#C8B89A" />
+          <ChevronLeft size={22} color="#C8B89A" strokeWidth={2.5} />
         </Pressable>
 
         <View style={styles.scoreBanner}>

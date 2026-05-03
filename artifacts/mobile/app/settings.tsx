@@ -1,4 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
+import {
+  ChevronLeft,
+  type LucideIcon,
+  Smartphone,
+  Volume2,
+} from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -65,7 +70,7 @@ export default function SettingsScreen() {
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={6}>
-          <Ionicons name="chevron-back" size={22} color="#C8B89A" />
+          <ChevronLeft size={22} color="#C8B89A" strokeWidth={2.5} />
         </Pressable>
         <Text style={styles.headerTitle}>{t.settings}</Text>
         <View style={{ width: 40 }} />
@@ -92,13 +97,13 @@ export default function SettingsScreen() {
 
         <View style={styles.section}>
           <ToggleRow
-            icon="volume-high-outline"
+            Icon={Volume2}
             label={t.sound}
             value={soundOn}
             onChange={onToggleSound}
           />
           <ToggleRow
-            icon="phone-portrait-outline"
+            Icon={Smartphone}
             label={t.vibration}
             value={hapticOn}
             onChange={onToggleHaptic}
@@ -117,12 +122,12 @@ export default function SettingsScreen() {
 }
 
 function ToggleRow({
-  icon,
+  Icon,
   label,
   value,
   onChange,
 }: {
-  icon: React.ComponentProps<typeof Ionicons>["name"];
+  Icon: LucideIcon;
   label: string;
   value: boolean;
   onChange: (v: boolean) => void;
@@ -130,7 +135,7 @@ function ToggleRow({
   return (
     <View style={styles.toggleRow}>
       <View style={styles.toggleLeft}>
-        <Ionicons name={icon} size={18} color="#C8A96E" />
+        <Icon size={18} color="#C8A96E" strokeWidth={2} />
         <Text style={styles.toggleLabel}>{label}</Text>
       </View>
       <Switch
