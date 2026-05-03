@@ -122,6 +122,7 @@ export default function GameScreen() {
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [isNewBest, setIsNewBest] = useState(false);
   const [comboText, setComboText] = useState<string | null>(null);
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [placedCells, setPlacedCells] = useState<PlacedCellAnim[]>([]);
@@ -135,9 +136,11 @@ export default function GameScreen() {
   const piecesRef = useRef(pieces);
   const boardRef = useRef(board);
   const scoreRef = useRef(score);
+  const bestScoreRef = useRef(bestScore);
   useEffect(() => { piecesRef.current = pieces; }, [pieces]);
   useEffect(() => { boardRef.current = board; }, [board]);
   useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { bestScoreRef.current = bestScore; }, [bestScore]);
 
   useEffect(() => {
     AsyncStorage.getItem(BEST_SCORE_KEY).then((val) => {
@@ -160,6 +163,7 @@ export default function GameScreen() {
     });
   }, [resume]);
 
+  // Keep displayed best score in sync
   useEffect(() => {
     if (score > bestScore) {
       setBestScore(score);
@@ -264,19 +268,16 @@ export default function GameScreen() {
       totalLines += fr.length + fc.length;
       cascadeCount++;
 
-      // Flash cleared cells gold
       setClearingCells(buildClearCells(nb, fr, fc));
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       await sleep(400);
       setClearingCells([]);
 
-      // Gravity: compute pre/post states for fall animation
       const clearedBoard = clearLines(nb, fr, fc);
       const gravityBoard = applyGravity(clearedBoard);
       const falling = computeFallingCells(clearedBoard, gravityBoard);
 
       if (falling.length > 0) {
-        // Show post-gravity board; animated cells fall into place over it
         setBoard(gravityBoard);
         setFallingCells(falling);
         await sleep(340);
@@ -291,6 +292,8 @@ export default function GameScreen() {
 
     const addedScore = calculateScore(blocksPlaced, totalLines, cascadeCount);
     const newScore = currentScore + addedScore;
+    // Capture new-best status against the persisted best BEFORE score state updates
+    const wasNewBest = newScore > bestScoreRef.current;
     setScore(newScore);
 
     if (totalLines > 0) showComboText(cascadeCount, totalLines);
@@ -300,6 +303,7 @@ export default function GameScreen() {
     if (isGameOver(nb, finalPieces)) {
       setTimeout(() => {
         clearSave();
+        setIsNewBest(wasNewBest);
         setGameOver(true);
       }, 350);
     }
@@ -367,6 +371,7 @@ export default function GameScreen() {
     setPieces(generateThreePieces());
     setScore(0);
     setGameOver(false);
+    setIsNewBest(false);
     setComboText(null);
     setDragState(null);
     setPlacedCells([]);
@@ -448,7 +453,7 @@ export default function GameScreen() {
         <GameOverModal
           score={score}
           bestScore={bestScore}
-          isNewBest={score > 0 && score >= bestScore}
+          isNewBest={isNewBest}
           onRestart={restart}
           onMenu={() => router.replace("/menu")}
           t={t}

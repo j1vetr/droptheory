@@ -51,27 +51,25 @@ export default function MenuScreen() {
       <StatusBar style="light" />
 
       <Pressable
-        style={[styles.settingsBtn, { top: topPad + 12 }]}
+        style={[styles.settingsBtn, { top: topPad + 8 }]}
         onPress={() => router.push("/settings")}
       >
         <Text style={styles.settingsIcon}>⚙</Text>
+        <Text style={styles.settingsLabel}>{t.settings}</Text>
       </Pressable>
 
-      {/* Title */}
       <View style={styles.titleBlock}>
         <View style={styles.titleDecoration} />
         <Text style={styles.title}>DROP{"\n"}THEORY</Text>
         <View style={styles.titleDecoration} />
       </View>
 
-      {/* How-to hints */}
       <View style={styles.hints}>
         <HintRow text={t.tutorial1} />
         <HintRow text={t.tutorial2} />
         <HintRow text={t.tutorial3} />
       </View>
 
-      {/* Buttons */}
       <View style={styles.buttons}>
         {hasSave && (
           <TouchableOpacity
@@ -115,16 +113,24 @@ const styles = StyleSheet.create({
   },
   settingsBtn: {
     position: "absolute",
-    right: 24,
-    width: 40,
-    height: 40,
+    right: 20,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
   },
   settingsIcon: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#6B6354",
+  },
+  settingsLabel: {
+    fontSize: 8,
+    fontFamily: "Inter_500Medium",
+    color: "#6B6354",
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+    marginTop: 2,
   },
   titleBlock: {
     alignItems: "center",

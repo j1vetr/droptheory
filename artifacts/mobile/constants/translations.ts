@@ -23,6 +23,8 @@ export interface Translations {
   newGame: string;
   home: string;
   back: string;
+  notFound: string;
+  goHome: string;
 }
 
 const en: Translations = {
@@ -48,6 +50,8 @@ const en: Translations = {
   newGame: "New Game",
   home: "Menu",
   back: "Back",
+  notFound: "This screen doesn't exist.",
+  goHome: "Go to home screen",
 };
 
 const tr: Translations = {
@@ -73,6 +77,8 @@ const tr: Translations = {
   newGame: "Yeni Oyun",
   home: "Menü",
   back: "Geri",
+  notFound: "Bu ekran mevcut değil.",
+  goHome: "Ana ekrana git",
 };
 
 export const translations: Record<Language, Translations> = { en, tr };
