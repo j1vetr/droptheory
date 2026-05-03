@@ -5,7 +5,7 @@ type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back" | "t
 const SOURCES: Record<SoundName, number> = {
   place: require("../assets/sounds/place.wav"),
   clear: require("../assets/sounds/clear.wav"),
-  combo: require("../assets/sounds/combo.wav"),
+  combo: require("../assets/sounds/combo.mp3"),
   gameover: require("../assets/sounds/gameover.wav"),
   best: require("../assets/sounds/best.mp3"),
   back: require("../assets/sounds/back.mp3"),
