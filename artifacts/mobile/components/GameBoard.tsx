@@ -429,7 +429,7 @@ export default function GameBoard({
 
 const styles = StyleSheet.create({
   boardOuter: {
-    borderRadius: 18,
+    borderRadius: 0,
     backgroundColor: "#1B0F38",
     borderWidth: 1.5,
     borderColor: "rgba(200,169,110,0.30)",
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
   board: {
     flexDirection: "row",
     flexWrap: "wrap",
-    borderRadius: 11,
+    borderRadius: 0,
     overflow: "hidden",
     position: "relative",
   },

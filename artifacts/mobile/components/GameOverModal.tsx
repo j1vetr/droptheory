@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Crown, Play, Sparkles, Trophy, X } from "lucide-react-native";
+import { Crown, Play, Sparkles, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -292,21 +292,14 @@ export default function GameOverModal({
           </View>
           <View style={styles.divider} />
           <View style={styles.scoreChip}>
-            <View style={styles.bestLabelRow}>
-              <Trophy
-                size={11}
-                color={isNewBest ? "#FFD980" : "#7FE0CC"}
-                strokeWidth={2.5}
-              />
-              <Text
-                style={[
-                  styles.scoreLabel,
-                  { color: isNewBest ? "#FFD980" : "#7FE0CC" },
-                ]}
-              >
-                {t.best.toUpperCase()}
-              </Text>
-            </View>
+            <Text
+              style={[
+                styles.scoreLabel,
+                { color: isNewBest ? "#FFD980" : "#7FE0CC" },
+              ]}
+            >
+              {t.best.toUpperCase()}
+            </Text>
             <Text
               style={[
                 styles.scoreValue,
@@ -549,12 +542,6 @@ const styles = StyleSheet.create({
     letterSpacing: 2.6,
     marginBottom: 8,
     textTransform: "uppercase",
-  },
-  bestLabelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    marginBottom: 8,
   },
   scoreValue: {
     fontSize: 34,

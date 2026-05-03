@@ -484,6 +484,10 @@ export default function GameScreen() {
         onLayout={measureBoard}
         style={[styles.boardWrapper, { width: boardSize, height: boardSize, marginHorizontal: BOARD_PAD }]}
       >
+        <View style={[styles.cornerAccent, styles.cornerTL]} />
+        <View style={[styles.cornerAccent, styles.cornerTR]} />
+        <View style={[styles.cornerAccent, styles.cornerBL]} />
+        <View style={[styles.cornerAccent, styles.cornerBR]} />
         <GameBoard
           board={board}
           ghostCells={ghostCells}
@@ -631,6 +635,7 @@ const styles = StyleSheet.create({
     color: "#E8C870",
   },
   boardWrapper: {
+    position: "relative",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -641,6 +646,37 @@ const styles = StyleSheet.create({
       android: { elevation: 18 },
       default: {},
     }),
+  },
+  cornerAccent: {
+    position: "absolute",
+    width: 18,
+    height: 18,
+    borderColor: "#C8A96E",
+    zIndex: 2,
+  },
+  cornerTL: {
+    top: -5,
+    left: -5,
+    borderTopWidth: 2,
+    borderLeftWidth: 2,
+  },
+  cornerTR: {
+    top: -5,
+    right: -5,
+    borderTopWidth: 2,
+    borderRightWidth: 2,
+  },
+  cornerBL: {
+    bottom: -5,
+    left: -5,
+    borderBottomWidth: 2,
+    borderLeftWidth: 2,
+  },
+  cornerBR: {
+    bottom: -5,
+    right: -5,
+    borderBottomWidth: 2,
+    borderRightWidth: 2,
   },
   trayWrapper: {
     height: TRAY_HEIGHT,
