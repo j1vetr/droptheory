@@ -367,10 +367,13 @@ export default function GameBoard({
                       left: GAP,
                       width: inner,
                       height: inner,
-                      opacity: ghost!.isValid ? 0.42 : 0.18,
+                      opacity: ghost!.isValid ? 0.45 : 0.55,
                     }}
                   >
-                    <PuffyBlock color={ghost!.color} size={inner} />
+                    <PuffyBlock
+                      color={ghost!.isValid ? ghost!.color : "#E14A3F"}
+                      size={inner}
+                    />
                   </View>
                 )}
               </View>

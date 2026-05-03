@@ -25,7 +25,7 @@ let hasPlayedIntro = false;
 
 const primaryBtnShadow = Platform.select({
   ios: {
-    shadowColor: "#B07E28",
+    shadowColor: "#2E8C7C",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.55,
     shadowRadius: 22,
@@ -188,7 +188,7 @@ export default function MenuScreen() {
           {
             top: topPad + 200,
             right: -80,
-            backgroundColor: "rgba(176,126,40,0.10)",
+            backgroundColor: "rgba(69,196,176,0.12)",
           },
         ]}
       />
@@ -202,7 +202,7 @@ export default function MenuScreen() {
         onPress={() => router.push("/settings")}
         hitSlop={8}
       >
-        <Ionicons name="settings-outline" size={18} color="#E8C870" />
+        <Ionicons name="settings-outline" size={18} color="#7FE0CC" />
       </Pressable>
 
       <ScrollView
@@ -213,11 +213,11 @@ export default function MenuScreen() {
         <View style={styles.hero}>
           {playIntro ? (
             <Animated.View entering={FadeInDown.duration(380)} style={styles.crownWrap}>
-              <MaterialCommunityIcons name="crown" size={26} color="#E8C870" />
+              <MaterialCommunityIcons name="crown" size={26} color="#F2B84B" />
             </Animated.View>
           ) : (
             <View style={styles.crownWrap}>
-              <MaterialCommunityIcons name="crown" size={26} color="#E8C870" />
+              <MaterialCommunityIcons name="crown" size={26} color="#F2B84B" />
             </View>
           )}
 
@@ -318,13 +318,13 @@ function PrimaryButton({ label, onPress }: { label: string; onPress: () => void 
       onPress={onPress}
     >
       <LinearGradient
-        colors={["#E8C870", "#C19A3D", "#9C7820"]}
+        colors={["#5DDDC4", "#3FB8A0", "#2E8C7C"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.primaryBtnGradient}
       >
         <View style={styles.primaryBtnInner}>
-          <Ionicons name="play" size={20} color="#FFF8E8" />
+          <Ionicons name="play" size={20} color="#FFFFFF" />
           <Text style={styles.primaryBtnText}>{label}</Text>
         </View>
       </LinearGradient>
@@ -344,7 +344,7 @@ function FooterTab({
   return (
     <View style={styles.footerTab}>
       <View style={styles.footerIconWrap}>
-        <Ionicons name={icon} size={22} color="#C8A96E" />
+        <Ionicons name={icon} size={22} color="#8FC9D9" />
         {badge && <View style={styles.footerBadge} />}
       </View>
       <Text style={styles.footerLabel}>{label.toUpperCase()}</Text>
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
     width: 320,
     height: 320,
     borderRadius: 160,
-    backgroundColor: "rgba(106,89,164,0.18)",
+    backgroundColor: "rgba(93,173,226,0.18)",
   },
   scrollContent: {
     flexGrow: 1,
@@ -380,10 +380,10 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(232,200,112,0.10)",
+    backgroundColor: "rgba(127,224,204,0.10)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(232,200,112,0.32)",
+    borderColor: "rgba(127,224,204,0.32)",
     zIndex: 10,
   },
   hero: {
@@ -408,18 +408,18 @@ const styles = StyleSheet.create({
   titleTheory: {
     fontSize: 56,
     fontFamily: "Inter_700Bold",
-    color: "#E8C870",
+    color: "#5DDDC4",
     textAlign: "center",
     lineHeight: 60,
     letterSpacing: 4,
-    textShadowColor: "rgba(176,126,40,0.55)",
+    textShadowColor: "rgba(46,140,124,0.65)",
     textShadowOffset: { width: 0, height: 6 },
     textShadowRadius: 18,
   },
   tagline: {
     fontSize: 14,
     fontFamily: "Inter_500Medium",
-    color: "#E8C870",
+    color: "#B5E8DC",
     letterSpacing: 1.6,
     textAlign: "center",
     fontStyle: "italic",
@@ -430,10 +430,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   miniBoardFrame: {
-    backgroundColor: "rgba(176,126,40,0.10)",
+    backgroundColor: "rgba(69,196,176,0.10)",
     borderRadius: 18,
     borderWidth: 1.5,
-    borderColor: "rgba(200,169,110,0.45)",
+    borderColor: "rgba(127,224,204,0.45)",
     padding: 4,
   },
   miniBoardInner: {
@@ -455,10 +455,10 @@ const styles = StyleSheet.create({
   ornamentLine: {
     width: 36,
     height: 1,
-    backgroundColor: "rgba(232,200,112,0.45)",
+    backgroundColor: "rgba(127,224,204,0.45)",
   },
   ornamentStar: {
-    color: "#E8C870",
+    color: "#7FE0CC",
     fontSize: 12,
   },
   buttons: {
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     fontSize: 17,
     fontFamily: "Inter_700Bold",
-    color: "#FFF8E8",
+    color: "#FFFFFF",
     letterSpacing: 3,
     textTransform: "uppercase",
   },
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: "rgba(232,200,112,0.50)",
+    borderColor: "rgba(127,224,204,0.50)",
     backgroundColor: "transparent",
     borderRadius: 30,
     minWidth: "100%",
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
   secondaryBtnText: {
     fontSize: 14,
     fontFamily: "Inter_600SemiBold",
-    color: "#E8C870",
+    color: "#7FE0CC",
     letterSpacing: 2.4,
     textTransform: "uppercase",
   },
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     paddingHorizontal: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(232,200,112,0.15)",
+    borderTopColor: "rgba(127,224,204,0.15)",
     marginTop: 4,
   },
   footerTab: {

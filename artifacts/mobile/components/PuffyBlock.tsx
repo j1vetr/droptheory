@@ -6,7 +6,6 @@ interface Props {
   color: string;
   size: number;
   radius?: number;
-  showSpecular?: boolean;
 }
 
 function lighten(hex: string, amount: number, alpha = 0.55): string {
@@ -22,19 +21,15 @@ function lighten(hex: string, amount: number, alpha = 0.55): string {
 }
 
 /**
- * Premium 3D-looking block with:
- *  - Base color
- *  - Diagonal volumetric sheen (top-left bright → bottom-right dark)
- *  - Top inner-edge highlight stripe (bevel)
- *  - Bottom inner-edge dark chamfer
- *  - Hairline lighter-tint border in the block's own color family
- *  - Optional small specular dot on larger blocks
+ * Lightweight grid block:
+ *  - Sharp corners (small radius), grid-friendly
+ *  - One subtle diagonal gradient for depth (top-left highlight, bottom-right shade)
+ *  - Lighter-tint hairline border in the block's own color family
+ *  - No top bevel rectangle, no specular dot — keeps it clean and fast
  */
-export default function PuffyBlock({ color, size, radius, showSpecular }: Props) {
-  const r = radius ?? Math.max(4, size * 0.20);
-  const innerR = Math.max(2, r - 1);
-  const includeSpecular = showSpecular ?? size >= 22;
-  const borderColor = lighten(color, 0.45, 0.55);
+export default function PuffyBlock({ color, size, radius }: Props) {
+  const r = radius ?? Math.max(2, Math.min(6, size * 0.10));
+  const borderColor = lighten(color, 0.40, 0.60);
 
   return (
     <View
@@ -48,63 +43,17 @@ export default function PuffyBlock({ color, size, radius, showSpecular }: Props)
         overflow: "hidden",
       }}
     >
-      {/* Volumetric diagonal sheen — single light source from upper-left */}
       <LinearGradient
         colors={[
-          "rgba(255,255,255,0.55)",
-          "rgba(255,255,255,0.18)",
+          "rgba(255,255,255,0.32)",
           "rgba(255,255,255,0.00)",
-          "rgba(0,0,0,0.18)",
-          "rgba(0,0,0,0.36)",
+          "rgba(0,0,0,0.28)",
         ]}
-        locations={[0, 0.20, 0.55, 0.85, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        locations={[0, 0.5, 1]}
+        start={{ x: 0.25, y: 0 }}
+        end={{ x: 0.75, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
-
-      {/* Top inner-edge highlight (bevel) */}
-      <View
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: Math.max(2, size * 0.10),
-          backgroundColor: "rgba(255,255,255,0.32)",
-          borderTopLeftRadius: innerR,
-          borderTopRightRadius: innerR,
-        }}
-      />
-
-      {/* Bottom inner-edge chamfer */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: Math.max(2, size * 0.13),
-          backgroundColor: "rgba(0,0,0,0.28)",
-          borderBottomLeftRadius: innerR,
-          borderBottomRightRadius: innerR,
-        }}
-      />
-
-      {/* Specular hot-spot — only for larger blocks */}
-      {includeSpecular && (
-        <View
-          style={{
-            position: "absolute",
-            top: size * 0.13,
-            left: size * 0.16,
-            width: size * 0.32,
-            height: size * 0.15,
-            borderRadius: size * 0.10,
-            backgroundColor: "rgba(255,255,255,0.45)",
-          }}
-        />
-      )}
     </View>
   );
 }

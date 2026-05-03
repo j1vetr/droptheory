@@ -77,7 +77,7 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize, isValid }
                   height: cellSize - 1,
                 }}
               >
-                <PuffyBlock color={piece.color} size={cellSize - 1} />
+                <PuffyBlock color={invalid ? "#E14A3F" : piece.color} size={cellSize - 1} />
               </View>
             );
           })
