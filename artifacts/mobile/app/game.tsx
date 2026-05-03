@@ -298,9 +298,21 @@ export default function GameScreen() {
 
     let nb = placePiece(currentBoard, piece.shape, row, col, piece.color);
     setBoard(nb);
-    setPlacedCells(
-      piece.shape.map(([dr, dc]) => ({ row: row + dr, col: col + dc, color: piece.color }))
+    const placedAnims = piece.shape.map(([dr, dc]) => ({
+      row: row + dr,
+      col: col + dc,
+      color: piece.color,
+    }));
+    setPlacedCells(placedAnims);
+    setParticleBursts(
+      placedAnims.map((c) => ({
+        row: c.row,
+        col: c.col,
+        color: c.color,
+        intensity: 0.35,
+      }))
     );
+    setTimeout(() => setParticleBursts([]), 360);
 
     const newPiecesArr = [...currentPieces] as (GamePiece | null)[];
     newPiecesArr[idx] = null;
