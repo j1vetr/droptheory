@@ -30,6 +30,13 @@ export interface FallingCellAnim {
   color: string;
 }
 
+export interface ParticleBurstAnim {
+  row: number;
+  col: number;
+  color: string;
+  intensity?: number;
+}
+
 interface GhostCell {
   row: number;
   col: number;
@@ -43,6 +50,7 @@ interface Props {
   placedCells?: PlacedCellAnim[];
   clearingCells?: ClearingCellAnim[];
   fallingCells?: FallingCellAnim[];
+  particleBursts?: ParticleBurstAnim[];
 }
 
 const boardShadow = Platform.select({
@@ -229,6 +237,122 @@ function AnimatedFallingCell({
   );
 }
 
+// Small colored squares that drift outward and fade when a line clears
+function ParticleBurstCell({
+  row,
+  col,
+  color,
+  cellSize,
+  intensity = 1,
+}: ParticleBurstAnim & { cellSize: number }) {
+  const count = Math.max(2, Math.round((3 + Math.floor(Math.random() * 4)) * intensity));
+  const particles = React.useMemo(
+    () =>
+      Array.from({ length: count }, () => {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = cellSize * (0.55 + Math.random() * 0.55) * intensity;
+        return {
+          dx: Math.cos(angle) * dist,
+          dy: Math.sin(angle) * dist - cellSize * 0.15 * intensity,
+          size: Math.max(3, cellSize * (0.14 + Math.random() * 0.08)),
+          rot: (Math.random() - 0.5) * 180,
+        };
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  return (
+    <View
+      pointerEvents="none"
+      style={{
+        position: "absolute",
+        top: row * cellSize,
+        left: col * cellSize,
+        width: cellSize,
+        height: cellSize,
+        zIndex: 12,
+      }}
+    >
+      {particles.map((p, i) => (
+        <Particle
+          key={i}
+          dx={p.dx}
+          dy={p.dy}
+          size={p.size}
+          rot={p.rot}
+          color={color}
+          centerX={cellSize / 2}
+          centerY={cellSize / 2}
+        />
+      ))}
+    </View>
+  );
+}
+
+function Particle({
+  dx,
+  dy,
+  size,
+  rot,
+  color,
+  centerX,
+  centerY,
+}: {
+  dx: number;
+  dy: number;
+  size: number;
+  rot: number;
+  color: string;
+  centerX: number;
+  centerY: number;
+}) {
+  const tx = useSharedValue(0);
+  const ty = useSharedValue(0);
+  const opacity = useSharedValue(0.95);
+  const scale = useSharedValue(1);
+  const rotation = useSharedValue(0);
+
+  useEffect(() => {
+    tx.value = withTiming(dx, { duration: 500 });
+    ty.value = withTiming(dy, { duration: 500 });
+    rotation.value = withTiming(rot, { duration: 500 });
+    opacity.value = withSequence(
+      withTiming(0.95, { duration: 60 }),
+      withTiming(0, { duration: 440 })
+    );
+    scale.value = withTiming(0.4, { duration: 500 });
+  }, [dx, dy, rot, opacity, rotation, scale, tx, ty]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: tx.value },
+      { translateY: ty.value },
+      { rotate: `${rotation.value}deg` },
+      { scale: scale.value },
+    ],
+    opacity: opacity.value,
+  }));
+
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        {
+          position: "absolute",
+          left: centerX - size / 2,
+          top: centerY - size / 2,
+          width: size,
+          height: size,
+          backgroundColor: color,
+          borderRadius: 1.5,
+        },
+        animStyle,
+      ]}
+    />
+  );
+}
+
 export default function GameBoard({
   board,
   ghostCells = [],
@@ -236,6 +360,7 @@ export default function GameBoard({
   placedCells = [],
   clearingCells = [],
   fallingCells = [],
+  particleBursts = [],
 }: Props) {
   const ghostMap = new Map<string, boolean>();
   for (const g of ghostCells) {
@@ -314,6 +439,17 @@ export default function GameBoard({
             row={c.row}
             col={c.col}
             color={c.color}
+            cellSize={cellSize}
+          />
+        ))}
+
+        {particleBursts.map((p, i) => (
+          <ParticleBurstCell
+            key={`burst-${p.row}-${p.col}-${i}`}
+            row={p.row}
+            col={p.col}
+            color={p.color}
+            intensity={p.intensity}
             cellSize={cellSize}
           />
         ))}

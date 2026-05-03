@@ -27,6 +27,7 @@ import FloatingPiece from "@/components/FloatingPiece";
 import GameBoard, {
   ClearingCellAnim,
   FallingCellAnim,
+  ParticleBurstAnim,
   PlacedCellAnim,
 } from "@/components/GameBoard";
 import GameOverModal from "@/components/GameOverModal";
@@ -130,6 +131,7 @@ export default function GameScreen() {
   const [placedCells, setPlacedCells] = useState<PlacedCellAnim[]>([]);
   const [clearingCells, setClearingCells] = useState<ClearingCellAnim[]>([]);
   const [fallingCells, setFallingCells] = useState<FallingCellAnim[]>([]);
+  const [particleBursts, setParticleBursts] = useState<ParticleBurstAnim[]>([]);
   const [scorePopups, setScorePopups] = useState<
     { id: number; x: number; y: number; value: number }[]
   >([]);
@@ -301,7 +303,18 @@ export default function GameScreen() {
       const stepValue = linesThisStep * 100 * cascadeCount;
       spawnScorePopup(fr, fc, stepValue);
 
-      setClearingCells(buildClearCells(nb, fr, fc));
+      const clearAnims = buildClearCells(nb, fr, fc);
+      setClearingCells(clearAnims);
+      const burstIntensity = cascadeCount === 1 ? 1 : 0.45;
+      setParticleBursts(
+        clearAnims.map((c) => ({
+          row: c.row,
+          col: c.col,
+          color: c.color,
+          intensity: burstIntensity,
+        }))
+      );
+      setTimeout(() => setParticleBursts([]), 520);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       await sleep(400);
       setClearingCells([]);
@@ -409,6 +422,7 @@ export default function GameScreen() {
     setPlacedCells([]);
     setClearingCells([]);
     setFallingCells([]);
+    setParticleBursts([]);
     gamePhaseRef.current = "idle";
   }, [clearSave]);
 
@@ -471,6 +485,7 @@ export default function GameScreen() {
           placedCells={placedCells}
           clearingCells={clearingCells}
           fallingCells={fallingCells}
+          particleBursts={particleBursts}
         />
       </View>
 
