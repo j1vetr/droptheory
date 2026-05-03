@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -13,9 +13,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useLanguage } from "@/context/LanguageContext";
+
+let hasPlayedIntro = false;
 
 const GAME_SAVE_KEY = "drop_theory_saved_game";
 
@@ -133,12 +136,21 @@ export default function MenuScreen() {
   const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const [hasSave, setHasSave] = useState(false);
+  const playIntroRef = useRef(!hasPlayedIntro);
+
+  useEffect(() => {
+    hasPlayedIntro = true;
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       AsyncStorage.getItem(GAME_SAVE_KEY).then((val) => setHasSave(!!val));
     }, [])
   );
+
+  const playIntro = playIntroRef.current;
+  const enter = (delay: number) =>
+    playIntro ? FadeInDown.duration(300).delay(delay) : undefined;
 
   const topPad = insets.top + (Platform.OS === "web" ? 67 : 0);
   const bottomPad = insets.bottom + (Platform.OS === "web" ? 34 : 0);
@@ -173,17 +185,27 @@ export default function MenuScreen() {
         bounces={false}
       >
       <View style={styles.hero}>
-        <Text style={styles.eyebrow}>{t.eyebrow.toUpperCase()}</Text>
-        <Text style={styles.title}>DROP{"\n"}THEORY</Text>
-        <Text style={styles.tagline}>{t.tagline}</Text>
-        <View style={styles.heroPreviewWrap}>
+        <Animated.Text entering={enter(0)} style={styles.eyebrow}>
+          {t.eyebrow.toUpperCase()}
+        </Animated.Text>
+        <Animated.Text entering={enter(70)} style={styles.title}>
+          DROP{"\n"}THEORY
+        </Animated.Text>
+        <Animated.Text entering={enter(140)} style={styles.tagline}>
+          {t.tagline}
+        </Animated.Text>
+        <Animated.View entering={enter(210)} style={styles.heroPreviewWrap}>
           <HeroMiniBoard />
-        </View>
+        </Animated.View>
       </View>
 
       <View style={styles.features}>
         {tutorials.map((text, i) => (
-          <View key={i} style={styles.featureCard}>
+          <Animated.View
+            key={i}
+            entering={enter(220 + i * 50)}
+            style={styles.featureCard}
+          >
             <View
               style={[
                 styles.featureDot,
@@ -191,11 +213,11 @@ export default function MenuScreen() {
               ]}
             />
             <Text style={styles.featureText}>{text}</Text>
-          </View>
+          </Animated.View>
         ))}
       </View>
 
-      <View style={styles.buttons}>
+      <Animated.View entering={enter(380)} style={styles.buttons}>
         {hasSave ? (
           <>
             <TouchableOpacity
@@ -228,7 +250,7 @@ export default function MenuScreen() {
             </View>
           </TouchableOpacity>
         )}
-      </View>
+      </Animated.View>
       </ScrollView>
     </View>
   );
