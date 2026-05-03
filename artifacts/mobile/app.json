@@ -15,10 +15,18 @@
       "backgroundColor": "#0D0D0D"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.droptheory.app",
+      "buildNumber": "1"
     },
     "android": {
-      "backgroundColor": "#0D0D0D"
+      "backgroundColor": "#0D0D0D",
+      "package": "com.droptheory.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#0D0D0D"
+      }
     },
     "web": {
       "favicon": "./assets/images/icon.png"
