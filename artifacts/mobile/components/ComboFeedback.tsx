@@ -5,6 +5,20 @@ interface Props {
   text: string | null;
 }
 
+const platformTextShadow = Platform.select({
+  ios: {
+    textShadowColor: "rgba(200,169,110,0.5)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 16,
+  },
+  android: {
+    textShadowColor: "rgba(200,169,110,0.5)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 16,
+  },
+  default: {},
+});
+
 export default function ComboFeedback({ text }: Props) {
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.6)).current;
@@ -63,7 +77,7 @@ export default function ComboFeedback({ text }: Props) {
         { opacity, transform: [{ scale }, { translateY }] },
       ]}
     >
-      <Text style={styles.text}>{text}</Text>
+      <Text style={[styles.text, platformTextShadow]}>{text}</Text>
     </Animated.View>
   );
 }
@@ -76,18 +90,12 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     zIndex: 100,
-    pointerEvents: "none",
-  } as any,
+  },
   text: {
     fontSize: 24,
     fontFamily: "Inter_600SemiBold",
     color: "#C8A96E",
     letterSpacing: 2,
     textTransform: "uppercase",
-    ...Platform.select({
-      ios: { textShadowColor: "rgba(200,169,110,0.5)", textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 16 },
-      android: { textShadowColor: "rgba(200,169,110,0.5)", textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 16 },
-      web: { textShadow: "0 0 16px rgba(200,169,110,0.5)" } as any,
-    }),
   },
 });

@@ -1,6 +1,7 @@
-import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -13,33 +14,57 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useLanguage } from "@/context/LanguageContext";
 
+const GAME_SAVE_KEY = "drop_theory_saved_game";
+
+const primaryBtnShadow = Platform.select({
+  ios: {
+    shadowColor: "#C8A96E",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+  },
+  android: { elevation: 6 },
+  default: {},
+});
+
 export default function MenuScreen() {
   const { t } = useLanguage();
   const insets = useSafeAreaInsets();
+  const [hasSave, setHasSave] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem(GAME_SAVE_KEY).then((val) => setHasSave(!!val));
+    }, [])
+  );
 
   const topPad = insets.top + (Platform.OS === "web" ? 67 : 0);
   const bottomPad = insets.bottom + (Platform.OS === "web" ? 34 : 0);
 
   return (
-    <View style={[styles.container, { paddingTop: topPad, paddingBottom: bottomPad }]}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: topPad, paddingBottom: bottomPad },
+      ]}
+    >
       <StatusBar style="light" />
 
-      {/* Settings button top-right */}
       <Pressable
-        style={styles.settingsBtn}
+        style={[styles.settingsBtn, { top: topPad + 12 }]}
         onPress={() => router.push("/settings")}
       >
         <Text style={styles.settingsIcon}>⚙</Text>
       </Pressable>
 
-      {/* Title block */}
+      {/* Title */}
       <View style={styles.titleBlock}>
         <View style={styles.titleDecoration} />
         <Text style={styles.title}>DROP{"\n"}THEORY</Text>
         <View style={styles.titleDecoration} />
       </View>
 
-      {/* Tutorial hints */}
+      {/* How-to hints */}
       <View style={styles.hints}>
         <HintRow text={t.tutorial1} />
         <HintRow text={t.tutorial2} />
@@ -48,8 +73,17 @@ export default function MenuScreen() {
 
       {/* Buttons */}
       <View style={styles.buttons}>
+        {hasSave && (
+          <TouchableOpacity
+            style={styles.continueBtn}
+            activeOpacity={0.8}
+            onPress={() => router.push("/game?resume=1")}
+          >
+            <Text style={styles.continueBtnText}>{t.continue}</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
-          style={styles.primaryBtn}
+          style={[styles.primaryBtn, primaryBtnShadow]}
           activeOpacity={0.8}
           onPress={() => router.push("/game")}
         >
@@ -57,7 +91,6 @@ export default function MenuScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Footer mark */}
       <Text style={styles.footer}>— DROP THEORY —</Text>
     </View>
   );
@@ -82,7 +115,6 @@ const styles = StyleSheet.create({
   },
   settingsBtn: {
     position: "absolute",
-    top: 56,
     right: 24,
     width: 40,
     height: 40,
@@ -96,7 +128,7 @@ const styles = StyleSheet.create({
   },
   titleBlock: {
     alignItems: "center",
-    marginTop: 80,
+    marginTop: 72,
     gap: 20,
   },
   titleDecoration: {
@@ -140,16 +172,26 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 12,
   },
+  continueBtn: {
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: "rgba(200,169,110,0.40)",
+    backgroundColor: "rgba(200,169,110,0.06)",
+  },
+  continueBtnText: {
+    fontSize: 15,
+    fontFamily: "Inter_600SemiBold",
+    color: "#C8A96E",
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+  },
   primaryBtn: {
     backgroundColor: "#C8A96E",
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: "center",
-    ...Platform.select({
-      ios: { shadowColor: "#C8A96E", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 12 },
-      android: { elevation: 6 },
-      web: { boxShadow: "0 4px 20px rgba(200,169,110,0.30)" } as any,
-    }),
   },
   primaryBtnText: {
     fontSize: 16,

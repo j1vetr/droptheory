@@ -1,0 +1,27 @@
+I want you to redesign and improve the current visual style of the existing React Native game “Drop Theory”. Please do not rebuild the whole project from scratch. Keep the existing game logic, gravity mechanics, Turkish and English language support, scoring system, drag and drop system, cascade combo structure, and general gameplay loop.
+
+The main problem is that the current design feels too plain, too static, and not game-like enough. I want the game to feel more colorful, more premium, more polished, and more engaging, but I do not want a neon, cyberpunk, futuristic, or overly glowing style.
+
+Please move the visual direction toward a “Premium Colorful Puzzle” style. The game should feel elegant, modern, warm, and playful, but not childish. It should look like a polished high-quality mobile puzzle game with tasteful colors, soft depth, smooth animations, and satisfying feedback.
+
+Use a rich but calm color palette. Avoid neon colors, harsh glow effects, overly bright gradients, cyberpunk visuals, and sci-fi looking UI. Instead, use deep navy, warm charcoal, muted cream, soft gold, dusty blue, sage green, terracotta, muted coral, lavender, and warm amber tones. The colors should feel premium and pleasant, not loud.
+
+Improve the 8x8 game board visually. The board should sit inside a beautiful rounded premium container with soft shadows, subtle depth, gentle borders, and a polished panel feeling. Empty grid cells should be visible in an elegant way, using low-opacity backgrounds or soft borders. The board should become the main visual focus of the game.
+
+Redesign the blocks so they no longer look like flat simple squares. Blocks should feel colorful, satisfying, and touchable, but not shiny neon objects. Use tasteful premium colors with soft gradients, slight highlights, rounded corners, subtle shadows, and a gentle tactile feel. The blocks can feel like polished ceramic tiles, soft glass pieces, or premium board-game tokens. They should be colorful enough to feel like a game, but still refined and mature.
+
+Improve the game feel with stronger visual feedback. When the player drags a piece, it should slightly scale up and feel responsive. When hovering over the board, show a clean ghost placement preview. Valid placement should feel clear and satisfying, while invalid placement should be shown with a subtle shake, opacity change, or soft warning feedback rather than an aggressive error effect. When a piece is successfully placed, it should snap into the board with a smooth micro-animation.
+
+Line clearing must feel much more rewarding. When a row or column clears, do not simply remove it instantly. Add a refined soft dissolve, gentle shimmer, elegant fade, or satisfying tile-pop animation. Avoid neon flashes or excessive particle effects. Show small score popups near the cleared area using clean typography and smooth motion.
+
+When gravity activates, blocks should fall smoothly with natural easing and a slight bounce when they land. The falling animation is one of the most important parts of this game, so it must feel satisfying and visually clear. The movement should feel physical, soft, and polished.
+
+Make cascade combos feel exciting and game-like without using neon effects. When gravity creates additional clears, display stylish combo text such as “CASCADE x2”, “CHAIN x3”, or “PERFECT DROP” in English, and “ZİNCİR x2”, “KOMBO x3”, or “KUSURSUZ DÜŞÜŞ” in Turkish. These texts should appear with premium motion, subtle scale animation, soft shadow, and tasteful color accents, but should not cover the board for too long.
+
+Improve the overall UI layout so it feels like a polished mobile game, not a basic app. The top area should include the score, best score, and settings or pause button inside elegant compact cards. The center should focus strongly on the board. The bottom area where the three available pieces are shown should be redesigned as a stylish tray or dock with rounded corners, soft depth, and a clean premium look. The available pieces should look like valuable game objects, not simple UI elements.
+
+Redesign the main menu as well. It should feel more premium and game-like. Show the title “Drop Theory” with a strong modern visual style, add the tagline “Think before it falls” in English and “Düşmeden önce düşün” in Turkish, and create a large satisfying Play / Oyna button. The menu background can include slow-moving abstract blocks, soft gradients, subtle depth layers, or calm floating shapes. Do not use neon, cyberpunk, sci-fi, or overly glowing visuals.
+
+The settings screen and game over screen should follow the same visual language. Keep the app bilingual. Do not remove Turkish and English language support. Make sure every new UI text, button, combo text, label, and message is included in the translation system. The game should continue detecting the device language if that already exists, and the language switcher should remain available in settings.
+
+Please focus on making the game feel more alive, more colorful, more premium, and more addictive without turning it into a neon arcade game. The current version works mechanically, but it does not yet have enough visual emotion. The goal is to make the player feel that this is a polished mobile puzzle game with a strong identity: elegant, colorful, tactile, calm, and satisfying. Keep the code clean and maintainable, avoid breaking the existing mechanics, and apply the redesign as an upgrade to the existing project.
