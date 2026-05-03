@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, {
@@ -29,6 +30,7 @@ import GameBoard, {
 } from "@/components/GameBoard";
 import GameOverModal from "@/components/GameOverModal";
 import PieceTray from "@/components/PieceTray";
+import ScorePopup from "@/components/ScorePopup";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   BOARD_SIZE,
@@ -127,6 +129,10 @@ export default function GameScreen() {
   const [placedCells, setPlacedCells] = useState<PlacedCellAnim[]>([]);
   const [clearingCells, setClearingCells] = useState<ClearingCellAnim[]>([]);
   const [fallingCells, setFallingCells] = useState<FallingCellAnim[]>([]);
+  const [scorePopups, setScorePopups] = useState<
+    { id: number; x: number; y: number; value: number }[]
+  >([]);
+  const popupIdRef = useRef(0);
 
   const boardViewRef = useRef<View>(null);
   const boardLayoutRef = useRef({ x: 0, y: 0, cs: cellSize });
@@ -194,7 +200,8 @@ export default function GameScreen() {
   const showComboText = useCallback(
     (cascades: number, totalLines: number) => {
       let text: string | null = null;
-      if (cascades > 1) text = `${t.cascade} x${cascades}`;
+      if (cascades >= 3) text = `${t.chain} x${cascades}`;
+      else if (cascades === 2) text = `${t.cascade} x2`;
       else if (totalLines >= 3) text = t.perfectDrop;
       if (text) {
         setComboText(text);
@@ -202,6 +209,32 @@ export default function GameScreen() {
       }
     },
     [t]
+  );
+
+  const spawnScorePopup = useCallback(
+    (rows: number[], cols: number[], value: number) => {
+      const { x, y, cs } = boardLayoutRef.current;
+      const allCells: { r: number; c: number }[] = [];
+      for (const r of rows) {
+        for (let c = 0; c < BOARD_SIZE; c++) allCells.push({ r, c });
+      }
+      for (const c of cols) {
+        for (let r = 0; r < BOARD_SIZE; r++) allCells.push({ r, c });
+      }
+      if (allCells.length === 0) return;
+      const cr =
+        allCells.reduce((s, p) => s + p.r, 0) / allCells.length;
+      const cc =
+        allCells.reduce((s, p) => s + p.c, 0) / allCells.length;
+      const px = x + cc * cs + cs / 2 - 18;
+      const py = y + cr * cs + cs / 2 - 12;
+      const id = ++popupIdRef.current;
+      setScorePopups((prev) => [...prev, { id, x: px, y: py, value }]);
+      setTimeout(() => {
+        setScorePopups((prev) => prev.filter((p) => p.id !== id));
+      }, 1000);
+    },
+    []
   );
 
   const dropHandlerRef = useRef(
@@ -229,6 +262,7 @@ export default function GameScreen() {
       !(row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE
         && isValidPlacement(currentBoard, piece.shape, row, col))
     ) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       setDragState(null);
       return;
     }
@@ -261,8 +295,12 @@ export default function GameScreen() {
       const { rows: fr, cols: fc } = findFullLines(nb);
       if (fr.length + fc.length === 0) break;
 
-      totalLines += fr.length + fc.length;
+      const linesThisStep = fr.length + fc.length;
+      totalLines += linesThisStep;
       cascadeCount++;
+
+      const stepValue = linesThisStep * 100 * cascadeCount;
+      spawnScorePopup(fr, fc, stepValue);
 
       setClearingCells(buildClearCells(nb, fr, fc));
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -386,6 +424,11 @@ export default function GameScreen() {
   return (
     <View style={[styles.container, { paddingTop: topPad, paddingBottom: bottomPad }]}>
       <StatusBar style="light" />
+      <LinearGradient
+        colors={["#16161E", "#111118", "#0E0E14"]}
+        style={StyleSheet.absoluteFillObject}
+        pointerEvents="none"
+      />
 
       <View style={styles.header}>
         <Pressable onPress={handleBack} style={styles.headerBtn}>
@@ -441,6 +484,10 @@ export default function GameScreen() {
           isValid={dragState.isValid}
         />
       )}
+
+      {scorePopups.map((p) => (
+        <ScorePopup key={p.id} x={p.x} y={p.y} value={p.value} />
+      ))}
 
       <ComboFeedback text={comboText} />
 

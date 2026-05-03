@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -77,6 +78,11 @@ export default function GameOverModal({
 
   return (
     <Animated.View style={[styles.overlay, { opacity }]}>
+      <LinearGradient
+        colors={["rgba(22,22,30,0.92)", "rgba(11,11,16,0.94)"]}
+        style={StyleSheet.absoluteFillObject}
+        pointerEvents="none"
+      />
       <Animated.View
         style={[
           styles.card,
@@ -131,7 +137,6 @@ export default function GameOverModal({
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(6,6,10,0.88)",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 500,

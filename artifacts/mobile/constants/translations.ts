@@ -15,6 +15,7 @@ export interface Translations {
   noMoves: string;
   tryAgain: string;
   cascade: string;
+  chain: string;
   perfectDrop: string;
   newBestScore: string;
   tutorial1: string;
@@ -43,6 +44,7 @@ const en: Translations = {
   noMoves: "No available moves",
   tryAgain: "Try Again",
   cascade: "Cascade",
+  chain: "Chain",
   perfectDrop: "Perfect Drop",
   newBestScore: "New Best Score",
   tutorial1: "Drag pieces onto the board",
@@ -71,6 +73,7 @@ const tr: Translations = {
   noMoves: "Uygun hamle kalmadı",
   tryAgain: "Tekrar Dene",
   cascade: "Zincir",
+  chain: "Kombo",
   perfectDrop: "Kusursuz Düşüş",
   newBestScore: "Yeni Rekor",
   tutorial1: "Parçaları tahtaya sürükle",

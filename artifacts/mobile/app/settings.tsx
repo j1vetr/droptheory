@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -29,6 +30,11 @@ export default function SettingsScreen() {
       ]}
     >
       <StatusBar style="light" />
+      <LinearGradient
+        colors={["#16161E", "#111118", "#0E0E14"]}
+        style={StyleSheet.absoluteFillObject}
+        pointerEvents="none"
+      />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backBtn}>

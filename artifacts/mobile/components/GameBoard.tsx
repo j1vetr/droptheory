@@ -177,8 +177,8 @@ function AnimatedFallingCell({
 
   useEffect(() => {
     translateY.value = withSpring(0, {
-      damping: 16,
-      stiffness: 180,
+      damping: 11,
+      stiffness: 200,
       overshootClamping: false,
     });
   }, [translateY]);
