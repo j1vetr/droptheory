@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -34,6 +33,13 @@ import GameOverModal from "@/components/GameOverModal";
 import PieceTray, { TRAY_HEIGHT } from "@/components/PieceTray";
 import ScorePopup from "@/components/ScorePopup";
 import { useLanguage } from "@/context/LanguageContext";
+import {
+  fxGameOver,
+  fxInvalid,
+  fxLineClear,
+  fxPickup,
+  fxPlace,
+} from "@/utils/feedback";
 import {
   BOARD_SIZE,
   Board,
@@ -264,7 +270,7 @@ export default function GameScreen() {
       !(row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE
         && isValidPlacement(currentBoard, piece.shape, row, col))
     ) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      fxInvalid();
       setDragState(null);
       return;
     }
@@ -285,7 +291,7 @@ export default function GameScreen() {
       : newPiecesArr;
     setPieces(finalPieces);
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    fxPlace();
     await sleep(180);
     setPlacedCells([]);
 
@@ -316,7 +322,7 @@ export default function GameScreen() {
         }))
       );
       setTimeout(() => setParticleBursts([]), 520);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      fxLineClear(cascadeCount, linesThisStep);
       await sleep(400);
       setClearingCells([]);
 
@@ -351,7 +357,10 @@ export default function GameScreen() {
         clearSave();
         setIsNewBest(wasNewBest);
         setGameOver(true);
+        fxGameOver(wasNewBest);
       }, 350);
+    } else if (wasNewBest) {
+      fxGameOver(true);
     }
 
     gamePhaseRef.current = "idle";
@@ -367,6 +376,7 @@ export default function GameScreen() {
           onPanResponderGrant: (evt) => {
             const piece = piecesRef.current[idx];
             if (!piece || gamePhaseRef.current !== "idle") return;
+            fxPickup();
             boardViewRef.current?.measure((_x, _y, w, _h, bx, by) => {
               boardLayoutRef.current = { x: bx, y: by, cs: w / BOARD_SIZE };
             });

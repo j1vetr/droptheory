@@ -13,6 +13,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { loadFeedbackPrefs } from "@/utils/feedback";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,6 +30,10 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError]);
+
+  useEffect(() => {
+    loadFeedbackPrefs();
+  }, []);
 
   if (!fontsLoaded && !fontError) return null;
 

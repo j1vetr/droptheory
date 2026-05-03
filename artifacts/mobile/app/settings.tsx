@@ -2,11 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Platform,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -15,10 +16,35 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Language } from "@/constants/translations";
 import { useLanguage } from "@/context/LanguageContext";
+import {
+  getHapticEnabled,
+  getSoundEnabled,
+  loadFeedbackPrefs,
+  setHapticPref,
+  setSoundPref,
+} from "@/utils/feedback";
 
 export default function SettingsScreen() {
   const { t, language, setLanguage } = useLanguage();
   const insets = useSafeAreaInsets();
+  const [soundOn, setSoundOn] = useState(true);
+  const [hapticOn, setHapticOn] = useState(true);
+
+  useEffect(() => {
+    loadFeedbackPrefs().then(() => {
+      setSoundOn(getSoundEnabled());
+      setHapticOn(getHapticEnabled());
+    });
+  }, []);
+
+  const onToggleSound = (val: boolean) => {
+    setSoundOn(val);
+    setSoundPref(val);
+  };
+  const onToggleHaptic = (val: boolean) => {
+    setHapticOn(val);
+    setHapticPref(val);
+  };
 
   const topPad = insets.top + (Platform.OS === "web" ? 67 : 0);
   const bottomPad = insets.bottom + (Platform.OS === "web" ? 34 : 0);
@@ -64,6 +90,21 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        <View style={styles.section}>
+          <ToggleRow
+            icon="volume-high-outline"
+            label={t.sound}
+            value={soundOn}
+            onChange={onToggleSound}
+          />
+          <ToggleRow
+            icon="phone-portrait-outline"
+            label={t.vibration}
+            value={hapticOn}
+            onChange={onToggleHaptic}
+          />
+        </View>
+
         <View style={styles.divider} />
 
         <View style={styles.infoBlock}>
@@ -71,6 +112,34 @@ export default function SettingsScreen() {
           <Text style={styles.appVersion}>v1.0</Text>
         </View>
       </View>
+    </View>
+  );
+}
+
+function ToggleRow({
+  icon,
+  label,
+  value,
+  onChange,
+}: {
+  icon: React.ComponentProps<typeof Ionicons>["name"];
+  label: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <View style={styles.toggleRow}>
+      <View style={styles.toggleLeft}>
+        <Ionicons name={icon} size={18} color="#C8A96E" />
+        <Text style={styles.toggleLabel}>{label}</Text>
+      </View>
+      <Switch
+        value={value}
+        onValueChange={onChange}
+        trackColor={{ false: "#2A1F45", true: "#B07E28" }}
+        thumbColor={value ? "#E8C870" : "#7A6F88"}
+        ios_backgroundColor="#2A1F45"
+      />
     </View>
   );
 }
@@ -140,7 +209,7 @@ const styles = StyleSheet.create({
     paddingTop: 36,
   },
   section: {
-    marginBottom: 36,
+    marginBottom: 28,
   },
   sectionLabel: {
     fontSize: 10,
@@ -185,6 +254,29 @@ const styles = StyleSheet.create({
   langBtnTextActive: {
     color: "#D4A83A",
     fontFamily: "Inter_600SemiBold",
+  },
+  toggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#1C1934",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.07)",
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 10,
+  },
+  toggleLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  toggleLabel: {
+    fontSize: 14,
+    fontFamily: "Inter_500Medium",
+    color: "#E8E4DE",
+    letterSpacing: 0.5,
   },
   divider: {
     height: 1,

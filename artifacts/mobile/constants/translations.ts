@@ -31,6 +31,10 @@ export interface Translations {
   leaderboard: string;
   dailyChallenge: string;
   rewards: string;
+  sound: string;
+  vibration: string;
+  on: string;
+  off: string;
 }
 
 const en: Translations = {
@@ -64,6 +68,10 @@ const en: Translations = {
   leaderboard: "Leaderboard",
   dailyChallenge: "Daily Challenge",
   rewards: "Rewards",
+  sound: "Sound",
+  vibration: "Vibration",
+  on: "On",
+  off: "Off",
 };
 
 const tr: Translations = {
@@ -97,6 +105,10 @@ const tr: Translations = {
   leaderboard: "Sıralama",
   dailyChallenge: "Günlük Görev",
   rewards: "Ödüller",
+  sound: "Ses",
+  vibration: "Titreşim",
+  on: "Açık",
+  off: "Kapalı",
 };
 
 export const translations: Record<Language, Translations> = { en, tr };
