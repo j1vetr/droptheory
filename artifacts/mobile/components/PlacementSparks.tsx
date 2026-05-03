@@ -20,7 +20,7 @@ interface Props {
   bursts: PlacementBurst[];
 }
 
-const PARTICLES_PER_BURST = 7;
+const PARTICLES_PER_BURST = 4;
 
 export default function PlacementSparks({ bursts }: Props) {
   if (bursts.length === 0) return null;
@@ -94,17 +94,11 @@ function SparkParticle({
   const rotation = useSharedValue(0);
 
   useEffect(() => {
-    tx.value = withTiming(dx, { duration: 620, easing: Easing.out(Easing.quad) });
-    ty.value = withTiming(dy, { duration: 620, easing: Easing.out(Easing.quad) });
-    rotation.value = withTiming(rot, { duration: 620 });
-    opacity.value = withSequence(
-      withTiming(1, { duration: 80 }),
-      withTiming(0, { duration: 540, easing: Easing.in(Easing.quad) })
-    );
-    scale.value = withSequence(
-      withTiming(1.1, { duration: 100 }),
-      withTiming(0.45, { duration: 520 })
-    );
+    tx.value = withTiming(dx, { duration: 480, easing: Easing.out(Easing.quad) });
+    ty.value = withTiming(dy, { duration: 480, easing: Easing.out(Easing.quad) });
+    rotation.value = withTiming(rot, { duration: 480 });
+    opacity.value = withTiming(0, { duration: 480, easing: Easing.in(Easing.quad) });
+    scale.value = withTiming(0.5, { duration: 480 });
   }, [dx, dy, rot, tx, ty, rotation, opacity, scale]);
 
   const animStyle = useAnimatedStyle(() => ({
@@ -129,11 +123,6 @@ function SparkParticle({
           height: size,
           backgroundColor: color,
           borderRadius: 2,
-          shadowColor: color,
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.9,
-          shadowRadius: 6,
-          elevation: 6,
         },
         animStyle,
       ]}

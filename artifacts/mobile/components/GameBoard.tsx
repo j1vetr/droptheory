@@ -187,7 +187,7 @@ function ParticleBurstCell({
   cellSize,
   intensity = 1,
 }: ParticleBurstAnim & { cellSize: number }) {
-  const count = Math.max(2, Math.round((3 + Math.floor(Math.random() * 4)) * intensity));
+  const count = Math.max(2, Math.round((2 + Math.floor(Math.random() * 3)) * intensity));
   const particles = React.useMemo(
     () =>
       Array.from({ length: count }, () => {

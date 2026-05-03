@@ -317,11 +317,8 @@ export default function GameScreen() {
       color: c.color,
       cellSize: cs,
     }));
-    setPlacementBursts((prev) => [...prev, ...newBursts]);
-    const burstIds = new Set(newBursts.map((b) => b.id));
-    setTimeout(() => {
-      setPlacementBursts((prev) => prev.filter((b) => !burstIds.has(b.id)));
-    }, 700);
+    setPlacementBursts(newBursts);
+    setTimeout(() => setPlacementBursts([]), 520);
 
     const newPiecesArr = [...currentPieces] as (GamePiece | null)[];
     newPiecesArr[idx] = null;
