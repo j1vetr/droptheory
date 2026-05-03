@@ -17,7 +17,7 @@ export default function SplashScreen() {
     const elapsed = Date.now() - mountedAtRef.current;
     const remaining = Math.max(0, MIN_VISIBLE_MS - elapsed);
     finishedRef.current = true;
-    setTimeout(() => router.replace("/game"), remaining);
+    setTimeout(() => router.replace("/menu"), remaining);
   };
 
   useEffect(() => {
