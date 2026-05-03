@@ -1,6 +1,6 @@
 import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from "expo-audio";
 
-type SoundName = "place" | "clear" | "combo" | "gameover" | "best";
+type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back";
 
 const SOURCES: Record<SoundName, number> = {
   place: require("../assets/sounds/place.wav"),
@@ -8,6 +8,7 @@ const SOURCES: Record<SoundName, number> = {
   combo: require("../assets/sounds/combo.wav"),
   gameover: require("../assets/sounds/gameover.wav"),
   best: require("../assets/sounds/best.wav"),
+  back: require("../assets/sounds/back.mp3"),
 };
 
 const POOL_SIZE: Partial<Record<SoundName, number>> = {

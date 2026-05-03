@@ -34,6 +34,7 @@ import PieceTray, { TRAY_HEIGHT } from "@/components/PieceTray";
 import ScorePopup from "@/components/ScorePopup";
 import { useLanguage } from "@/context/LanguageContext";
 import {
+  fxBack,
   fxGameOver,
   fxInvalid,
   fxLineClear,
@@ -439,6 +440,7 @@ export default function GameScreen() {
   }, [clearSave]);
 
   const handleBack = useCallback(() => {
+    fxBack();
     saveGame(boardRef.current, piecesRef.current, scoreRef.current);
     router.replace("/menu");
   }, [saveGame]);
@@ -526,7 +528,10 @@ export default function GameScreen() {
           bestScore={bestScore}
           isNewBest={isNewBest}
           onRestart={restart}
-          onMenu={() => router.replace("/menu")}
+          onMenu={() => {
+            fxBack();
+            router.replace("/menu");
+          }}
           t={t}
         />
       )}

@@ -6,6 +6,7 @@ import {
 } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { fxBack } from "@/utils/feedback";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
@@ -69,7 +70,14 @@ export default function SettingsScreen() {
       />
 
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={6}>
+        <Pressable
+          onPress={() => {
+            fxBack();
+            router.back();
+          }}
+          style={styles.backBtn}
+          hitSlop={6}
+        >
           <ChevronLeft size={22} color="#C8B89A" strokeWidth={2.5} />
         </Pressable>
         <Text style={styles.headerTitle}>{t.settings}</Text>

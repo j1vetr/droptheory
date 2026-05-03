@@ -54,7 +54,12 @@ export async function setHapticPref(value: boolean) {
   }
 }
 
-type SoundName = "place" | "clear" | "combo" | "gameover" | "best";
+type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back";
+
+export function fxBack() {
+  if (hapticOn) Haptics.selectionAsync();
+  playSound("back");
+}
 
 export function fxPlace() {
   if (hapticOn) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
