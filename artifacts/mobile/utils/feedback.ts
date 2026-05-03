@@ -54,11 +54,16 @@ export async function setHapticPref(value: boolean) {
   }
 }
 
-type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back";
+type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back" | "toggle";
 
 export function fxBack() {
   if (hapticOn) Haptics.selectionAsync();
   playSound("back");
+}
+
+export function fxToggle() {
+  if (hapticOn) Haptics.selectionAsync();
+  playSound("toggle");
 }
 
 export function fxPlace() {

@@ -6,7 +6,7 @@ import {
 } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { fxBack } from "@/utils/feedback";
+import { fxBack, fxToggle } from "@/utils/feedback";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
@@ -46,10 +46,16 @@ export default function SettingsScreen() {
   const onToggleSound = (val: boolean) => {
     setSoundOn(val);
     setSoundPref(val);
+    if (val) fxToggle();
   };
   const onToggleHaptic = (val: boolean) => {
     setHapticOn(val);
     setHapticPref(val);
+    fxToggle();
+  };
+  const onSelectLanguage = (lang: typeof language) => {
+    fxToggle();
+    setLanguage(lang);
   };
 
   const topPad = insets.top + (Platform.OS === "web" ? 67 : 0);
@@ -92,13 +98,13 @@ export default function SettingsScreen() {
               label={t.english}
               lang="en"
               current={language}
-              onSelect={setLanguage}
+              onSelect={onSelectLanguage}
             />
             <LanguageBtn
               label={t.turkish}
               lang="tr"
               current={language}
-              onSelect={setLanguage}
+              onSelect={onSelectLanguage}
             />
           </View>
         </View>
