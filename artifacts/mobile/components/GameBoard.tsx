@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 
 import { BOARD_SIZE, Board } from "@/utils/gameEngine";
 
@@ -45,6 +45,17 @@ interface Props {
   fallingCells?: FallingCellAnim[];
 }
 
+const boardShadow = Platform.select({
+  ios: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.55,
+    shadowRadius: 20,
+  },
+  android: { elevation: 16 },
+  default: {},
+});
+
 // Scale-in overlay played briefly when a piece is placed
 function AnimatedPlacedCell({
   row,
@@ -79,16 +90,28 @@ function AnimatedPlacedCell({
           width: cellSize,
           height: cellSize,
           backgroundColor: color,
-          borderRadius: 3,
+          borderRadius: 5,
           zIndex: 10,
+          overflow: "hidden",
         },
         animStyle,
       ]}
-    />
+    >
+      <View
+        style={{
+          position: "absolute",
+          top: 0, left: 0, right: 0,
+          height: "30%",
+          backgroundColor: "rgba(255,255,255,0.20)",
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 5,
+        }}
+      />
+    </Animated.View>
   );
 }
 
-// Flash-gold-then-dissolve overlay for cleared rows/columns
+// Shimmer-dissolve overlay for cleared rows/columns
 function AnimatedClearingCell({
   row,
   col,
@@ -96,23 +119,29 @@ function AnimatedClearingCell({
   color,
 }: ClearingCellAnim & { cellSize: number }) {
   const progress = useSharedValue(0);
+  const scale = useSharedValue(1);
 
   useEffect(() => {
     progress.value = withSequence(
-      withTiming(1, { duration: 190 }),
-      withTiming(0, { duration: 220 })
+      withTiming(1, { duration: 160 }),
+      withTiming(0, { duration: 240 })
     );
-  }, [progress]);
+    scale.value = withSequence(
+      withTiming(1, { duration: 160 }),
+      withTiming(1.12, { duration: 240 })
+    );
+  }, [progress, scale]);
 
   const animStyle = useAnimatedStyle(() => {
     const bg = interpolateColor(
       progress.value,
-      [0, 0.6, 1],
-      [color, "#C8A96E", "rgba(200,169,110,0)"]
+      [0, 0.5, 1],
+      [color, "#E8D090", "rgba(232,208,144,0)"]
     );
     return {
       backgroundColor: bg,
       opacity: progress.value < 0.05 ? progress.value * 20 : 1,
+      transform: [{ scale: scale.value }],
     };
   });
 
@@ -122,10 +151,11 @@ function AnimatedClearingCell({
       style={[
         {
           position: "absolute",
-          top: row * cellSize + 0.5,
-          left: col * cellSize + 0.5,
-          width: cellSize - 1,
-          height: cellSize - 1,
+          top: row * cellSize + 1,
+          left: col * cellSize + 1,
+          width: cellSize - 2,
+          height: cellSize - 2,
+          borderRadius: 5,
           zIndex: 11,
         },
         animStyle,
@@ -142,7 +172,6 @@ function AnimatedFallingCell({
   cellSize,
   color,
 }: FallingCellAnim & { cellSize: number }) {
-  // translateY starts at the distance above the landing row, then springs to 0
   const initialOffset = (fromRow - toRow) * cellSize;
   const translateY = useSharedValue(initialOffset);
 
@@ -169,7 +198,7 @@ function AnimatedFallingCell({
           width: cellSize,
           height: cellSize,
           backgroundColor: color,
-          borderRadius: 2,
+          borderRadius: 5,
           zIndex: 5,
           overflow: "hidden",
         },
@@ -179,13 +208,21 @@ function AnimatedFallingCell({
       <View
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "35%",
-          backgroundColor: "rgba(255,255,255,0.12)",
-          borderTopLeftRadius: 2,
-          borderTopRightRadius: 2,
+          top: 0, left: 0, right: 0,
+          height: "30%",
+          backgroundColor: "rgba(255,255,255,0.18)",
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 5,
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0, left: 0, right: 0,
+          height: "18%",
+          backgroundColor: "rgba(0,0,0,0.22)",
+          borderBottomLeftRadius: 5,
+          borderBottomRightRadius: 5,
         }}
       />
     </Animated.View>
@@ -207,114 +244,138 @@ export default function GameBoard({
     }
   }
 
-  // Hide destination cells in the static board while a falling animation covers them
   const fallingDestSet = new Set(fallingCells.map((fc) => `${fc.toRow},${fc.col}`));
 
   return (
-    <View
-      style={[
-        styles.board,
-        { width: cellSize * BOARD_SIZE, height: cellSize * BOARD_SIZE },
-      ]}
-    >
-      {Array.from({ length: BOARD_SIZE }, (_, row) =>
-        Array.from({ length: BOARD_SIZE }, (_, col) => {
-          const key = `${row},${col}`;
-          const color = board[row][col];
-          const ghost = ghostMap.get(key);
-          const hiddenByFall = fallingDestSet.has(key);
+    <View style={[styles.boardOuter, boardShadow]}>
+      <View
+        style={[
+          styles.board,
+          { width: cellSize * BOARD_SIZE, height: cellSize * BOARD_SIZE },
+        ]}
+      >
+        {Array.from({ length: BOARD_SIZE }, (_, row) =>
+          Array.from({ length: BOARD_SIZE }, (_, col) => {
+            const key = `${row},${col}`;
+            const color = board[row][col];
+            const ghost = ghostMap.get(key);
+            const hiddenByFall = fallingDestSet.has(key);
 
-          return (
-            <View
-              key={key}
-              style={[
-                styles.cell,
-                { width: cellSize, height: cellSize },
-                color && !hiddenByFall
-                  ? [styles.filled, { backgroundColor: color }]
-                  : styles.empty,
-                ghost !== undefined &&
-                  (ghost ? styles.ghostValid : styles.ghostInvalid),
-              ]}
-            >
-              {color && !hiddenByFall && <View style={styles.cellHighlight} />}
-            </View>
-          );
-        })
-      )}
+            return (
+              <View
+                key={key}
+                style={[
+                  styles.cell,
+                  { width: cellSize, height: cellSize },
+                  color && !hiddenByFall
+                    ? [styles.filled, { backgroundColor: color }]
+                    : styles.empty,
+                  ghost !== undefined &&
+                    (ghost ? styles.ghostValid : styles.ghostInvalid),
+                ]}
+              >
+                {color && !hiddenByFall && (
+                  <>
+                    <View style={styles.cellHighlight} />
+                    <View style={styles.cellShadow} />
+                  </>
+                )}
+              </View>
+            );
+          })
+        )}
 
-      {fallingCells.map((c) => (
-        <AnimatedFallingCell
-          key={`fall-${c.col}-${c.fromRow}`}
-          fromRow={c.fromRow}
-          toRow={c.toRow}
-          col={c.col}
-          color={c.color}
-          cellSize={cellSize}
-        />
-      ))}
+        {fallingCells.map((c) => (
+          <AnimatedFallingCell
+            key={`fall-${c.col}-${c.fromRow}`}
+            fromRow={c.fromRow}
+            toRow={c.toRow}
+            col={c.col}
+            color={c.color}
+            cellSize={cellSize}
+          />
+        ))}
 
-      {placedCells.map((c) => (
-        <AnimatedPlacedCell
-          key={`placed-${c.row}-${c.col}`}
-          row={c.row}
-          col={c.col}
-          color={c.color}
-          cellSize={cellSize}
-        />
-      ))}
+        {placedCells.map((c) => (
+          <AnimatedPlacedCell
+            key={`placed-${c.row}-${c.col}`}
+            row={c.row}
+            col={c.col}
+            color={c.color}
+            cellSize={cellSize}
+          />
+        ))}
 
-      {clearingCells.map((c) => (
-        <AnimatedClearingCell
-          key={`clear-${c.row}-${c.col}`}
-          row={c.row}
-          col={c.col}
-          color={c.color}
-          cellSize={cellSize}
-        />
-      ))}
+        {clearingCells.map((c) => (
+          <AnimatedClearingCell
+            key={`clear-${c.row}-${c.col}`}
+            row={c.row}
+            col={c.col}
+            color={c.color}
+            cellSize={cellSize}
+          />
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  boardOuter: {
+    borderRadius: 12,
+    backgroundColor: "#15151C",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.09)",
+  },
   board: {
     flexDirection: "row",
     flexWrap: "wrap",
-    borderRadius: 4,
+    borderRadius: 11,
     overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.06)",
     position: "relative",
   },
   cell: {
     borderWidth: 0.5,
-    borderColor: "rgba(255,255,255,0.06)",
+    borderColor: "rgba(255,255,255,0.05)",
     position: "relative",
     overflow: "hidden",
+    borderRadius: 4,
   },
   filled: {
-    borderColor: "rgba(255,255,255,0.10)",
+    borderColor: "rgba(255,255,255,0.14)",
+    borderRadius: 5,
   },
   empty: {
-    backgroundColor: "rgba(255,255,255,0.02)",
+    backgroundColor: "rgba(255,255,255,0.025)",
   },
   cellHighlight: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: "35%",
-    backgroundColor: "rgba(255,255,255,0.12)",
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2,
+    height: "30%",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+  },
+  cellShadow: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "18%",
+    backgroundColor: "rgba(0,0,0,0.22)",
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
   },
   ghostValid: {
-    backgroundColor: "rgba(200,169,110,0.30)",
-    borderColor: "rgba(200,169,110,0.60)",
+    backgroundColor: "rgba(176,126,40,0.32)",
+    borderColor: "rgba(200,169,110,0.65)",
+    borderRadius: 5,
   },
   ghostInvalid: {
-    backgroundColor: "rgba(180,60,60,0.25)",
-    borderColor: "rgba(180,60,60,0.50)",
+    backgroundColor: "rgba(168,78,80,0.22)",
+    borderColor: "rgba(180,80,80,0.45)",
+    borderRadius: 5,
   },
 });

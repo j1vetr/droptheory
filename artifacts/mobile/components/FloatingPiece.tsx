@@ -17,10 +17,7 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize }: Props) 
   return (
     <View
       pointerEvents="none"
-      style={[
-        StyleSheet.absoluteFillObject,
-        { zIndex: 999 },
-      ]}
+      style={[StyleSheet.absoluteFillObject, { zIndex: 999 }]}
     >
       <View
         style={{
@@ -29,7 +26,8 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize }: Props) 
           top: pageY - cellSize * 0.5,
           width: bounds.cols * cellSize,
           height: bounds.rows * cellSize,
-          opacity: 0.9,
+          opacity: 0.95,
+          transform: [{ scale: 1.10 }],
         }}
       >
         {Array.from({ length: bounds.rows }, (_, r) =>
@@ -46,22 +44,30 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize }: Props) 
                   width: cellSize - 1,
                   height: cellSize - 1,
                   backgroundColor: piece.color,
-                  borderRadius: 3,
+                  borderRadius: 5,
                   borderWidth: 0.5,
-                  borderColor: "rgba(255,255,255,0.15)",
+                  borderColor: "rgba(255,255,255,0.18)",
                   overflow: "hidden",
                 }}
               >
                 <View
                   style={{
                     position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: "35%",
-                    backgroundColor: "rgba(255,255,255,0.18)",
-                    borderTopLeftRadius: 3,
-                    borderTopRightRadius: 3,
+                    top: 0, left: 0, right: 0,
+                    height: "30%",
+                    backgroundColor: "rgba(255,255,255,0.22)",
+                    borderTopLeftRadius: 5,
+                    borderTopRightRadius: 5,
+                  }}
+                />
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: 0, left: 0, right: 0,
+                    height: "18%",
+                    backgroundColor: "rgba(0,0,0,0.20)",
+                    borderBottomLeftRadius: 5,
+                    borderBottomRightRadius: 5,
                   }}
                 />
               </View>

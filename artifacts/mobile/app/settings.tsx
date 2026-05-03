@@ -30,7 +30,6 @@ export default function SettingsScreen() {
     >
       <StatusBar style="light" />
 
-      {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
@@ -40,7 +39,6 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.content}>
-        {/* Language section */}
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>{t.language}</Text>
           <View style={styles.languageRow}>
@@ -61,7 +59,6 @@ export default function SettingsScreen() {
 
         <View style={styles.divider} />
 
-        {/* App info */}
         <View style={styles.infoBlock}>
           <Text style={styles.appName}>DROP THEORY</Text>
           <Text style={styles.appVersion}>v1.0</Text>
@@ -86,9 +83,10 @@ function LanguageBtn({
   return (
     <TouchableOpacity
       style={[styles.langBtn, active && styles.langBtnActive]}
-      activeOpacity={0.75}
+      activeOpacity={0.72}
       onPress={() => onSelect(lang)}
     >
+      {active && <View style={styles.langBtnActiveDot} />}
       <Text style={[styles.langBtnText, active && styles.langBtnTextActive]}>
         {label}
       </Text>
@@ -99,7 +97,7 @@ function LanguageBtn({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0D0D0D",
+    backgroundColor: "#111118",
   },
   header: {
     flexDirection: "row",
@@ -114,33 +112,38 @@ const styles = StyleSheet.create({
     height: 44,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.07)",
+    marginLeft: 8,
   },
   backText: {
-    fontSize: 24,
-    color: "#6B6354",
+    fontSize: 20,
+    color: "#7A7266",
   },
   headerTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: "Inter_600SemiBold",
-    color: "#F5F0E8",
-    letterSpacing: 1.5,
+    color: "#E8E4DE",
+    letterSpacing: 2,
     textTransform: "uppercase",
   },
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 32,
+    paddingTop: 36,
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 36,
   },
   sectionLabel: {
     fontSize: 10,
     fontFamily: "Inter_500Medium",
-    color: "#6B6354",
-    letterSpacing: 2,
+    color: "#5A5448",
+    letterSpacing: 2.5,
     textTransform: "uppercase",
     marginBottom: 16,
   },
@@ -150,31 +153,40 @@ const styles = StyleSheet.create({
   },
   langBtn: {
     flex: 1,
-    paddingVertical: 14,
-    borderRadius: 10,
+    paddingVertical: 16,
+    borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "#1C1C1C",
+    justifyContent: "center",
+    backgroundColor: "#18181F",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
+    borderColor: "rgba(255,255,255,0.07)",
+    gap: 6,
+    flexDirection: "row",
   },
   langBtnActive: {
-    backgroundColor: "rgba(200,169,110,0.12)",
-    borderColor: "#C8A96E",
+    backgroundColor: "rgba(176,126,40,0.10)",
+    borderColor: "#B07E28",
+  },
+  langBtnActiveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#D4A83A",
   },
   langBtnText: {
     fontSize: 14,
     fontFamily: "Inter_500Medium",
-    color: "#6B6354",
+    color: "#5A5448",
     letterSpacing: 0.5,
   },
   langBtnTextActive: {
-    color: "#C8A96E",
+    color: "#D4A83A",
     fontFamily: "Inter_600SemiBold",
   },
   divider: {
     height: 1,
     backgroundColor: "rgba(255,255,255,0.06)",
-    marginBottom: 32,
+    marginBottom: 36,
   },
   infoBlock: {
     alignItems: "center",
@@ -183,13 +195,13 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 12,
     fontFamily: "Inter_600SemiBold",
-    color: "rgba(107,99,84,0.5)",
-    letterSpacing: 4,
+    color: "rgba(90,84,72,0.55)",
+    letterSpacing: 5,
   },
   appVersion: {
     fontSize: 11,
     fontFamily: "Inter_400Regular",
-    color: "rgba(107,99,84,0.3)",
+    color: "rgba(90,84,72,0.35)",
     letterSpacing: 1,
   },
 });

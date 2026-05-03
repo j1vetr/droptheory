@@ -1,8 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Animated,
+  Easing,
   Platform,
   Pressable,
   StyleSheet,
@@ -18,14 +20,32 @@ const GAME_SAVE_KEY = "drop_theory_saved_game";
 
 const primaryBtnShadow = Platform.select({
   ios: {
-    shadowColor: "#C8A96E",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.28,
-    shadowRadius: 12,
+    shadowColor: "#B07E28",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.38,
+    shadowRadius: 14,
   },
-  android: { elevation: 6 },
+  android: { elevation: 10 },
   default: {},
 });
+
+// Slow-drifting semi-transparent shape for background depth
+function DriftShape({
+  style,
+  dx,
+  dy,
+}: {
+  style: object;
+  dx: Animated.Value;
+  dy: Animated.Value;
+}) {
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[style, { transform: [{ translateX: dx }, { translateY: dy }] }]}
+    />
+  );
+}
 
 export default function MenuScreen() {
   const { t } = useLanguage();
@@ -37,6 +57,61 @@ export default function MenuScreen() {
       AsyncStorage.getItem(GAME_SAVE_KEY).then((val) => setHasSave(!!val));
     }, [])
   );
+
+  // Four independent drift animations
+  const d = useRef(
+    Array.from({ length: 4 }, () => ({
+      x: new Animated.Value(0),
+      y: new Animated.Value(0),
+    }))
+  ).current;
+
+  useEffect(() => {
+    const drift = (
+      val: Animated.Value,
+      range: number,
+      duration: number,
+      delay: number
+    ) => {
+      const loop = Animated.loop(
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(val, {
+            toValue: range,
+            duration,
+            easing: Easing.inOut(Easing.sin),
+            useNativeDriver: true,
+          }),
+          Animated.timing(val, {
+            toValue: -range,
+            duration,
+            easing: Easing.inOut(Easing.sin),
+            useNativeDriver: true,
+          }),
+        ])
+      );
+      loop.start();
+      return loop;
+    };
+
+    const cfg = [
+      [14, 18, 9000, 10000, 0, 500],
+      [20, 12, 10500, 8500, 1000, 0],
+      [10, 22, 8000, 11000, 0, 800],
+      [18, 14, 11500, 9500, 600, 200],
+    ];
+    const anims = cfg.map(([xr, yr, xd, yd, xdel, ydel], i) => [
+      drift(d[i].x, xr, xd, xdel),
+      drift(d[i].y, yr, yd, ydel),
+    ]);
+
+    return () => {
+      anims.forEach(([ax, ay]) => {
+        ax.stop();
+        ay.stop();
+      });
+    };
+  }, [d]);
 
   const topPad = insets.top + (Platform.OS === "web" ? 67 : 0);
   const bottomPad = insets.bottom + (Platform.OS === "web" ? 34 : 0);
@@ -50,6 +125,30 @@ export default function MenuScreen() {
     >
       <StatusBar style="light" />
 
+      {/* Drifting background shapes */}
+      <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+        <DriftShape
+          style={styles.drift1}
+          dx={d[0].x}
+          dy={d[0].y}
+        />
+        <DriftShape
+          style={styles.drift2}
+          dx={d[1].x}
+          dy={d[1].y}
+        />
+        <DriftShape
+          style={styles.drift3}
+          dx={d[2].x}
+          dy={d[2].y}
+        />
+        <DriftShape
+          style={styles.drift4}
+          dx={d[3].x}
+          dy={d[3].y}
+        />
+      </View>
+
       <Pressable
         style={[styles.settingsBtn, { top: topPad + 8 }]}
         onPress={() => router.push("/settings")}
@@ -62,6 +161,7 @@ export default function MenuScreen() {
         <View style={styles.titleDecoration} />
         <Text style={styles.title}>DROP{"\n"}THEORY</Text>
         <View style={styles.titleDecoration} />
+        <Text style={styles.tagline}>{t.tagline}</Text>
       </View>
 
       <View style={styles.hints}>
@@ -74,7 +174,7 @@ export default function MenuScreen() {
         {hasSave && (
           <TouchableOpacity
             style={styles.continueBtn}
-            activeOpacity={0.8}
+            activeOpacity={0.78}
             onPress={() => router.push("/game?resume=1")}
           >
             <Text style={styles.continueBtnText}>{t.continue}</Text>
@@ -82,7 +182,7 @@ export default function MenuScreen() {
         )}
         <TouchableOpacity
           style={[styles.primaryBtn, primaryBtnShadow]}
-          activeOpacity={0.8}
+          activeOpacity={0.78}
           onPress={() => router.push("/game")}
         >
           <Text style={styles.primaryBtnText}>{t.play}</Text>
@@ -106,10 +206,52 @@ function HintRow({ text }: { text: string }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0D0D0D",
+    backgroundColor: "#111118",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 32,
+    overflow: "hidden",
+  },
+  // Drifting background shapes
+  drift1: {
+    position: "absolute",
+    width: 130,
+    height: 130,
+    borderRadius: 14,
+    backgroundColor: "#2D6494",
+    opacity: 0.07,
+    top: "8%",
+    left: "-12%",
+  },
+  drift2: {
+    position: "absolute",
+    width: 90,
+    height: 90,
+    borderRadius: 10,
+    backgroundColor: "#B05730",
+    opacity: 0.07,
+    top: "58%",
+    right: "-8%",
+  },
+  drift3: {
+    position: "absolute",
+    width: 70,
+    height: 160,
+    borderRadius: 12,
+    backgroundColor: "#4B7A5A",
+    opacity: 0.06,
+    top: "28%",
+    right: "4%",
+  },
+  drift4: {
+    position: "absolute",
+    width: 110,
+    height: 80,
+    borderRadius: 10,
+    backgroundColor: "#6A59A4",
+    opacity: 0.07,
+    top: "72%",
+    left: "-8%",
   },
   settingsBtn: {
     position: "absolute",
@@ -122,12 +264,12 @@ const styles = StyleSheet.create({
   },
   settingsIcon: {
     fontSize: 18,
-    color: "#6B6354",
+    color: "#5A5448",
   },
   settingsLabel: {
     fontSize: 8,
     fontFamily: "Inter_500Medium",
-    color: "#6B6354",
+    color: "#5A5448",
     letterSpacing: 1.5,
     textTransform: "uppercase",
     marginTop: 2,
@@ -135,43 +277,58 @@ const styles = StyleSheet.create({
   titleBlock: {
     alignItems: "center",
     marginTop: 72,
-    gap: 20,
+    gap: 16,
   },
   titleDecoration: {
-    width: 32,
-    height: 1,
-    backgroundColor: "#C8A96E",
-    opacity: 0.6,
+    width: 36,
+    height: 1.5,
+    backgroundColor: "#B07E28",
+    opacity: 0.7,
   },
   title: {
-    fontSize: 52,
+    fontSize: 54,
     fontFamily: "Inter_700Bold",
-    color: "#F5F0E8",
+    color: "#F0EDE8",
     textAlign: "center",
-    lineHeight: 56,
-    letterSpacing: 4,
+    lineHeight: 58,
+    letterSpacing: 5,
+  },
+  tagline: {
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+    color: "#6B6354",
+    letterSpacing: 1.5,
+    textAlign: "center",
+    marginTop: 4,
+    fontStyle: "italic",
   },
   hints: {
     width: "100%",
-    gap: 12,
-    paddingHorizontal: 8,
+    gap: 10,
+    paddingHorizontal: 4,
+    backgroundColor: "rgba(255,255,255,0.025)",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.05)",
+    paddingVertical: 16,
   },
   hintRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    paddingHorizontal: 12,
   },
   hintDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#C8A96E",
-    opacity: 0.7,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: "#B07E28",
+    opacity: 0.75,
   },
   hintText: {
     fontSize: 13,
     fontFamily: "Inter_400Regular",
-    color: "#6B6354",
+    color: "#5A5448",
     letterSpacing: 0.3,
   },
   buttons: {
@@ -179,37 +336,37 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   continueBtn: {
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: 14,
+    paddingVertical: 15,
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: "rgba(200,169,110,0.40)",
-    backgroundColor: "rgba(200,169,110,0.06)",
+    borderColor: "rgba(176,126,40,0.45)",
+    backgroundColor: "rgba(176,126,40,0.07)",
   },
   continueBtnText: {
     fontSize: 15,
     fontFamily: "Inter_600SemiBold",
-    color: "#C8A96E",
-    letterSpacing: 1.5,
+    color: "#D4A83A",
+    letterSpacing: 2,
     textTransform: "uppercase",
   },
   primaryBtn: {
-    backgroundColor: "#C8A96E",
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: "#B07E28",
+    borderRadius: 14,
+    paddingVertical: 18,
     alignItems: "center",
   },
   primaryBtnText: {
-    fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
-    color: "#0D0D0D",
-    letterSpacing: 1.5,
+    fontSize: 17,
+    fontFamily: "Inter_700Bold",
+    color: "#FDFAF4",
+    letterSpacing: 2,
     textTransform: "uppercase",
   },
   footer: {
     fontSize: 10,
     fontFamily: "Inter_400Regular",
-    color: "rgba(107,99,84,0.4)",
+    color: "rgba(90,84,72,0.45)",
     letterSpacing: 3,
     marginBottom: 8,
   },

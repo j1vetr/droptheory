@@ -68,7 +68,7 @@ function buildClearCells(board: Board, rows: number[], cols: number[]): Clearing
       const key = `${r},${c}`;
       if (!seen.has(key)) {
         seen.add(key);
-        result.push({ row: r, col: c, color: board[r][c] ?? "#C8A96E" });
+        result.push({ row: r, col: c, color: board[r][c] ?? "#B07E28" });
       }
     }
   }
@@ -77,14 +77,13 @@ function buildClearCells(board: Board, rows: number[], cols: number[]): Clearing
       const key = `${r},${c}`;
       if (!seen.has(key)) {
         seen.add(key);
-        result.push({ row: r, col: c, color: board[r][c] ?? "#C8A96E" });
+        result.push({ row: r, col: c, color: board[r][c] ?? "#B07E28" });
       }
     }
   }
   return result;
 }
 
-// Compare boards before and after gravity to find cells that moved down
 function computeFallingCells(before: Board, after: Board): FallingCellAnim[] {
   const result: FallingCellAnim[] = [];
   for (let col = 0; col < BOARD_SIZE; col++) {
@@ -163,7 +162,6 @@ export default function GameScreen() {
     });
   }, [resume]);
 
-  // Keep displayed best score in sync
   useEffect(() => {
     if (score > bestScore) {
       setBestScore(score);
@@ -238,7 +236,6 @@ export default function GameScreen() {
     gamePhaseRef.current = "animating";
     setDragState(null);
 
-    // Phase 1: place piece, show scale-in overlay
     let nb = placePiece(currentBoard, piece.shape, row, col, piece.color);
     setBoard(nb);
     setPlacedCells(
@@ -256,7 +253,6 @@ export default function GameScreen() {
     await sleep(180);
     setPlacedCells([]);
 
-    // Phase 2: cascade — clear → gravity fall → repeat
     let totalLines = 0;
     let cascadeCount = 0;
     const blocksPlaced = piece.shape.length;
@@ -292,7 +288,6 @@ export default function GameScreen() {
 
     const addedScore = calculateScore(blocksPlaced, totalLines, cascadeCount);
     const newScore = currentScore + addedScore;
-    // Capture new-best status against the persisted best BEFORE score state updates
     const wasNewBest = newScore > bestScoreRef.current;
     setScore(newScore);
 
@@ -397,12 +392,11 @@ export default function GameScreen() {
           <Text style={styles.headerBtnText}>←</Text>
         </Pressable>
         <View style={styles.scores}>
-          <View style={styles.scoreBlock}>
+          <View style={styles.scoreChip}>
             <Text style={styles.scoreLabel}>{t.score}</Text>
             <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
           </View>
-          <View style={styles.scoreDivider} />
-          <View style={styles.scoreBlock}>
+          <View style={[styles.scoreChip, styles.bestChip]}>
             <Text style={styles.scoreLabel}>{t.best}</Text>
             <Text style={[styles.scoreValue, styles.bestValue]}>
               {bestScore.toLocaleString()}
@@ -417,7 +411,7 @@ export default function GameScreen() {
       <View
         ref={boardViewRef}
         onLayout={measureBoard}
-        style={{ width: boardSize, height: boardSize, marginHorizontal: BOARD_PAD }}
+        style={[styles.boardWrapper, { width: boardSize, height: boardSize, marginHorizontal: BOARD_PAD }]}
       >
         <GameBoard
           board={board}
@@ -466,42 +460,52 @@ export default function GameScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0D0D0D",
+    backgroundColor: "#111118",
     alignItems: "center",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     paddingVertical: 10,
-    marginBottom: 4,
+    marginBottom: 6,
+    gap: 8,
   },
   headerBtn: {
-    width: 44,
-    height: 44,
+    width: 42,
+    height: 42,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: 21,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
   },
   headerBtnText: {
-    fontSize: 22,
-    color: "#6B6354",
+    fontSize: 20,
+    color: "#7A7266",
   },
   scores: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 20,
+    gap: 10,
   },
-  scoreBlock: {
+  scoreChip: {
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
     alignItems: "center",
-    minWidth: 72,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
+    minWidth: 78,
   },
-  scoreDivider: {
-    width: 1,
-    height: 28,
-    backgroundColor: "rgba(255,255,255,0.08)",
+  bestChip: {
+    borderColor: "rgba(200,169,110,0.22)",
+    backgroundColor: "rgba(200,169,110,0.06)",
   },
   scoreLabel: {
     fontSize: 9,
@@ -512,12 +516,24 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   scoreValue: {
-    fontSize: 20,
+    fontSize: 19,
     fontFamily: "Inter_700Bold",
-    color: "#F5F0E8",
+    color: "#F0EDE8",
   },
   bestValue: {
-    color: "#C8A96E",
+    color: "#D4A83A",
+  },
+  boardWrapper: {
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.55,
+        shadowRadius: 24,
+      },
+      android: { elevation: 18 },
+      default: {},
+    }),
   },
   tray: {
     flex: 1,

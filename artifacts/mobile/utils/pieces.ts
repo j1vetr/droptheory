@@ -47,15 +47,16 @@ const PIECE_SHAPES: Shape[] = [
   [[0, 1], [1, 0], [1, 1], [2, 0]],
 ];
 
+// Rich, saturated-but-calm palette — premium puzzle tile colors
 export const BLOCK_COLORS = [
-  "#1A5757",
-  "#1A3A58",
-  "#371A58",
-  "#254A25",
-  "#4A2020",
-  "#4A4A1A",
-  "#1A3A4A",
-  "#3A2040",
+  "#2D6494", // deep ocean blue
+  "#B05730", // warm terracotta
+  "#4B7A5A", // sage green
+  "#2E7B8A", // dusty teal
+  "#B07E28", // warm amber
+  "#A84E6E", // dusty rose
+  "#6A59A4", // soft lavender
+  "#327068", // seafoam green
 ];
 
 function generateId(): string {
