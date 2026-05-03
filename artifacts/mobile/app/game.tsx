@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
     height: TRAY_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 12,
-    marginBottom: 8,
+    marginTop: 6,
+    marginBottom: 4,
   },
 });

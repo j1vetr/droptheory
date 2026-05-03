@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import {
@@ -103,11 +104,17 @@ export default function GameOverModal({
 
         <View style={styles.scoreRow}>
           <View style={styles.scoreChip}>
-            <Text style={styles.scoreLabel}>{t.score}</Text>
+            <View style={styles.scoreLabelRow}>
+              <Ionicons name="sparkles" size={10} color="#7A7266" />
+              <Text style={styles.scoreLabel}>{t.score}</Text>
+            </View>
             <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
           </View>
           <View style={[styles.scoreChip, styles.bestChip]}>
-            <Text style={styles.scoreLabel}>{t.best}</Text>
+            <View style={styles.scoreLabelRow}>
+              <Ionicons name="trophy" size={11} color="#B07E28" />
+              <Text style={[styles.scoreLabel, styles.bestLabel]}>{t.best}</Text>
+            </View>
             <Text style={[styles.scoreValue, styles.bestValue]}>
               {bestScore.toLocaleString()}
             </Text>
@@ -206,13 +213,21 @@ const styles = StyleSheet.create({
     borderColor: "rgba(200,169,110,0.22)",
     backgroundColor: "rgba(200,169,110,0.06)",
   },
-  scoreLabel: {
-    fontSize: 10,
-    fontFamily: "Inter_500Medium",
-    color: "#6B6354",
-    letterSpacing: 2,
-    textTransform: "uppercase",
+  scoreLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
     marginBottom: 4,
+  },
+  scoreLabel: {
+    fontSize: 9,
+    fontFamily: "Inter_600SemiBold",
+    color: "#7A7266",
+    letterSpacing: 2.2,
+    textTransform: "uppercase",
+  },
+  bestLabel: {
+    color: "#B07E28",
   },
   scoreValue: {
     fontSize: 30,
