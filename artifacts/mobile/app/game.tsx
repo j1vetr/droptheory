@@ -60,7 +60,8 @@ import { GamePiece, generateThreePieces } from "@/utils/pieces";
 const BEST_SCORE_KEY = "drop_theory_best_score";
 const GAME_SAVE_KEY = "drop_theory_saved_game";
 const BOARD_PAD = 16;
-const FINGER_LIFT = 80;
+const BOARD_OUTER_PAD = 6;
+const FINGER_LIFT = 130;
 
 interface DragState {
   pieceIndex: number;
@@ -128,7 +129,7 @@ export default function GameScreen() {
   const insets = useSafeAreaInsets();
 
   const boardSize = screenWidth - BOARD_PAD * 2;
-  const cellSize = boardSize / BOARD_SIZE;
+  const cellSize = (boardSize - BOARD_OUTER_PAD * 2) / BOARD_SIZE;
 
   const [board, setBoard] = useState<Board>(createEmptyBoard());
   const [pieces, setPieces] = useState<(GamePiece | null)[]>(generateThreePieces());
@@ -198,7 +199,11 @@ export default function GameScreen() {
 
   const measureBoard = useCallback(() => {
     boardViewRef.current?.measure((_x, _y, w, _h, px, py) => {
-      boardLayoutRef.current = { x: px, y: py, cs: w / BOARD_SIZE };
+      boardLayoutRef.current = {
+        x: px + BOARD_OUTER_PAD,
+        y: py + BOARD_OUTER_PAD,
+        cs: (w - BOARD_OUTER_PAD * 2) / BOARD_SIZE,
+      };
     });
   }, []);
 
@@ -212,10 +217,16 @@ export default function GameScreen() {
 
   const showComboText = useCallback(
     (cascades: number, totalLines: number) => {
+      const level = Math.max(cascades, totalLines);
       let text: string | null = null;
-      if (cascades >= 3) text = `${t.chain} x${cascades}`;
-      else if (cascades === 2) text = `${t.cascade} x2`;
-      else if (totalLines >= 3) text = t.perfectDrop;
+      if (cascades >= 2) {
+        text = `${t.chain} x${cascades}`;
+      } else if (totalLines >= 2) {
+        text = `${t.cascade} x${totalLines}`;
+      }
+      if (text && level >= 5) {
+        text = `MEGA x${level}`;
+      }
       if (text) {
         setComboText(text);
         setTimeout(() => setComboText(null), 2200);
@@ -385,7 +396,11 @@ export default function GameScreen() {
             if (!piece || gamePhaseRef.current !== "idle") return;
             fxPickup();
             boardViewRef.current?.measure((_x, _y, w, _h, bx, by) => {
-              boardLayoutRef.current = { x: bx, y: by, cs: w / BOARD_SIZE };
+              boardLayoutRef.current = {
+                x: bx + BOARD_OUTER_PAD,
+                y: by + BOARD_OUTER_PAD,
+                cs: (w - BOARD_OUTER_PAD * 2) / BOARD_SIZE,
+              };
             });
             const { pageX, pageY } = evt.nativeEvent;
             const { row, col } = getGridPos(pageX, pageY - FINGER_LIFT);
