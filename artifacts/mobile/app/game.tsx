@@ -465,9 +465,7 @@ export default function GameScreen() {
           </View>
         </View>
 
-        <Pressable onPress={restart} style={styles.iconBtn} hitSlop={6}>
-          <Ionicons name="refresh" size={20} color="#C8B89A" />
-        </Pressable>
+        <View style={styles.iconBtnSpacer} />
       </View>
 
       <View
@@ -549,6 +547,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
+  },
+  iconBtnSpacer: {
+    width: 40,
+    height: 40,
   },
   scoreBanner: {
     flex: 1,
