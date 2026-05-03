@@ -56,6 +56,62 @@ export function isSoundEnabled() {
   return enabled;
 }
 
+type MusicName = "menu";
+
+const MUSIC_SOURCES: Record<MusicName, number> = {
+  menu: require("../assets/sounds/menu_music.mp3"),
+};
+
+const musicPlayers: Partial<Record<MusicName, AudioPlayer>> = {};
+let activeMusic: MusicName | null = null;
+
+async function ensureMusic(name: MusicName) {
+  await ensureInit();
+  if (musicPlayers[name]) return musicPlayers[name]!;
+  try {
+    const p = createAudioPlayer(MUSIC_SOURCES[name]);
+    p.loop = true;
+    p.volume = 0.45;
+    musicPlayers[name] = p;
+    return p;
+  } catch {
+    return null;
+  }
+}
+
+export function playMusic(name: MusicName) {
+  if (!enabled) return;
+  ensureMusic(name).then((p) => {
+    if (!p) return;
+    if (activeMusic && activeMusic !== name) {
+      stopMusic(activeMusic);
+    }
+    activeMusic = name;
+    try {
+      if (!p.playing) {
+        p.seekTo(0);
+        p.play();
+      }
+    } catch {
+      // ignore
+    }
+  });
+}
+
+export function stopMusic(name?: MusicName) {
+  const target = name ?? activeMusic;
+  if (!target) return;
+  const p = musicPlayers[target];
+  if (!p) return;
+  try {
+    p.pause();
+    p.seekTo(0);
+  } catch {
+    // ignore
+  }
+  if (activeMusic === target) activeMusic = null;
+}
+
 export function playSound(name: SoundName) {
   if (!enabled) return;
   ensureInit().then(() => {

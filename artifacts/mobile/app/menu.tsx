@@ -7,6 +7,11 @@ import {
 } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
+import {
+  fxMenuMusicStart,
+  fxMenuMusicStop,
+  loadFeedbackPrefs,
+} from "@/utils/feedback";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -196,6 +201,8 @@ export default function MenuScreen() {
   useFocusEffect(
     useCallback(() => {
       AsyncStorage.getItem(GAME_SAVE_KEY).then((val) => setHasSave(!!val));
+      loadFeedbackPrefs().then(() => fxMenuMusicStart());
+      return () => fxMenuMusicStop();
     }, [])
   );
 

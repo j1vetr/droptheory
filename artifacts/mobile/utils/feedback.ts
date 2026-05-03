@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
 
-import { playSound, setSoundEnabled } from "@/utils/sounds";
+import { playMusic, playSound, setSoundEnabled, stopMusic } from "@/utils/sounds";
 
 const SOUND_KEY = "drop_theory_sound_enabled";
 const HAPTIC_KEY = "drop_theory_haptic_enabled";
@@ -38,11 +38,20 @@ export function getHapticEnabled() {
 export async function setSoundPref(value: boolean) {
   soundOn = value;
   setSoundEnabled(value);
+  if (!value) stopMusic();
   try {
     await AsyncStorage.setItem(SOUND_KEY, value ? "1" : "0");
   } catch {
     // ignore
   }
+}
+
+export function fxMenuMusicStart() {
+  playMusic("menu");
+}
+
+export function fxMenuMusicStop() {
+  stopMusic("menu");
 }
 
 export async function setHapticPref(value: boolean) {
