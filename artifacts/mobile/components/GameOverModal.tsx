@@ -1,5 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Crown, Play, Sparkles, X } from "lucide-react-native";
+import { fxButton } from "@/utils/feedback";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -320,7 +321,10 @@ export default function GameOverModal({
         >
           <TouchableOpacity
             style={[styles.primaryBtn, primaryShadow]}
-            onPress={onRestart}
+            onPress={() => {
+              fxButton();
+              onRestart();
+            }}
             activeOpacity={0.85}
           >
             <LinearGradient

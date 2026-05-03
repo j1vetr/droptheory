@@ -1,6 +1,6 @@
 import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from "expo-audio";
 
-type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back" | "toggle";
+type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back" | "toggle" | "button";
 
 const SOURCES: Record<SoundName, number> = {
   place: require("../assets/sounds/place.wav"),
@@ -10,6 +10,7 @@ const SOURCES: Record<SoundName, number> = {
   best: require("../assets/sounds/best.wav"),
   back: require("../assets/sounds/back.mp3"),
   toggle: require("../assets/sounds/toggle.mp3"),
+  button: require("../assets/sounds/button.mp3"),
 };
 
 const POOL_SIZE: Partial<Record<SoundName, number>> = {

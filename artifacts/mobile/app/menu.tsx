@@ -8,6 +8,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
 import {
+  fxButton,
   fxMenuMusicStart,
   fxMenuMusicStop,
   loadFeedbackPrefs,
@@ -212,8 +213,15 @@ export default function MenuScreen() {
   const topPad = insets.top + (Platform.OS === "web" ? 67 : 0);
   const bottomPad = insets.bottom + (Platform.OS === "web" ? 34 : 0);
 
-  const goPlay = (resume: boolean) =>
+  const goPlay = (resume: boolean) => {
+    fxButton();
     router.push(resume ? "/game?resume=1" : "/game");
+  };
+
+  const goSettings = () => {
+    fxButton();
+    router.push("/settings");
+  };
 
   return (
     <View
@@ -255,7 +263,7 @@ export default function MenuScreen() {
 
       <Pressable
         style={[styles.settingsBtn, { top: topPad + 12 }]}
-        onPress={() => router.push("/settings")}
+        onPress={goSettings}
         hitSlop={8}
       >
         <SettingsIcon size={18} color="#7FE0CC" strokeWidth={2} />
