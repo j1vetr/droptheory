@@ -40,6 +40,7 @@ import {
   fxLineClear,
   fxPickup,
   fxPlace,
+  fxScore,
 } from "@/utils/feedback";
 import {
   BOARD_SIZE,
@@ -239,6 +240,7 @@ export default function GameScreen() {
       const py = y + cr * cs + cs / 2 - 12;
       const id = ++popupIdRef.current;
       setScorePopups((prev) => [...prev, { id, x: px, y: py, value }]);
+      fxScore();
       setTimeout(() => {
         setScorePopups((prev) => prev.filter((p) => p.id !== id));
       }, 1000);
