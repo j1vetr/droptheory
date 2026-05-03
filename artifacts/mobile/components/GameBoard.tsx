@@ -461,9 +461,9 @@ export default function GameBoard({
 const styles = StyleSheet.create({
   boardOuter: {
     borderRadius: 12,
-    backgroundColor: "#15151C",
+    backgroundColor: "#1A1638",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.09)",
+    borderColor: "rgba(255,255,255,0.10)",
   },
   board: {
     flexDirection: "row",

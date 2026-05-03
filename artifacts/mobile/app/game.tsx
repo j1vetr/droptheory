@@ -438,7 +438,7 @@ export default function GameScreen() {
     <View style={[styles.container, { paddingTop: topPad, paddingBottom: bottomPad }]}>
       <StatusBar style="light" />
       <LinearGradient
-        colors={["#16161E", "#111118", "#0E0E14"]}
+        colors={["#262148", "#181432", "#0F0C22"]}
         style={StyleSheet.absoluteFillObject}
         pointerEvents="none"
       />
@@ -531,7 +531,7 @@ export default function GameScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#111118",
+    backgroundColor: "#181432",
     alignItems: "center",
     justifyContent: "space-between",
   },

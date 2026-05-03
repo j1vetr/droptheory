@@ -202,7 +202,7 @@ export default function MenuScreen() {
     >
       <StatusBar style="light" />
       <LinearGradient
-        colors={["#1A1822", "#111118", "#0B0B12"]}
+        colors={["#262148", "#181432", "#0F0C22"]}
         style={StyleSheet.absoluteFillObject}
         pointerEvents="none"
       />
@@ -331,7 +331,7 @@ export default function MenuScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#111118",
+    backgroundColor: "#181432",
     overflow: "hidden",
   },
   scrollContent: {
@@ -385,10 +385,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   miniBoard: {
-    backgroundColor: "#15151C",
+    backgroundColor: "#1A1638",
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
+    borderColor: "rgba(255,255,255,0.14)",
     padding: 8,
     alignItems: "center",
     justifyContent: "center",
