@@ -7,7 +7,7 @@ const SOURCES: Record<SoundName, number> = {
   clear: require("../assets/sounds/clear.wav"),
   combo: require("../assets/sounds/combo.wav"),
   gameover: require("../assets/sounds/gameover.wav"),
-  best: require("../assets/sounds/best.wav"),
+  best: require("../assets/sounds/best.mp3"),
   back: require("../assets/sounds/back.mp3"),
   toggle: require("../assets/sounds/toggle.mp3"),
   button: require("../assets/sounds/button.mp3"),
