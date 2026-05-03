@@ -159,17 +159,19 @@ const styles = StyleSheet.create({
     borderColor: "rgba(200,169,110,0.22)",
   },
   gameOverLabel: {
-    fontSize: 30,
+    fontSize: 32,
     fontFamily: "Inter_700Bold",
     color: "#F0EDE8",
-    letterSpacing: 0.5,
+    letterSpacing: 4,
+    textTransform: "uppercase",
     marginBottom: 6,
   },
   noMovesText: {
-    fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontSize: 12,
+    fontFamily: "Inter_600SemiBold",
     color: "#7A7266",
-    letterSpacing: 0.4,
+    letterSpacing: 2,
+    textTransform: "uppercase",
     marginBottom: 26,
   },
   divider: {
@@ -247,9 +249,10 @@ const styles = StyleSheet.create({
   },
   primaryBtnText: {
     fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "Inter_700Bold",
     color: "#FDFAF4",
-    letterSpacing: 1,
+    letterSpacing: 3,
+    textTransform: "uppercase",
   },
   secondaryBtn: {
     paddingVertical: 10,
@@ -257,9 +260,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   secondaryBtnText: {
-    fontSize: 14,
-    fontFamily: "Inter_500Medium",
-    color: "#5A5448",
-    letterSpacing: 0.5,
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+    color: "#8A8270",
+    letterSpacing: 2.5,
+    textTransform: "uppercase",
   },
 });

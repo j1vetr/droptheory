@@ -3,8 +3,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Dimensions,
   Platform,
   Pressable,
   ScrollView,
@@ -13,7 +14,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  FadeInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import PuffyBlock from "@/components/PuffyBlock";
@@ -106,35 +115,70 @@ function HeroMiniBoard() {
   );
 }
 
-// Floating decorative 3D blocks scattered around the periphery
-const BG_BLOCKS: { color: string; size: number; top: number; left: number; rotate: number }[] = [
-  { color: "#F2B84B", size: 38, top: 100, left: 24,  rotate: -14 },
-  { color: "#B084DC", size: 32, top: 170, left: 332, rotate:  20 },
-  { color: "#5DADE2", size: 28, top: 380, left: 18,  rotate: -8 },
-  { color: "#E76F61", size: 30, top: 410, left: 348, rotate:  16 },
-  { color: "#7FB77E", size: 26, top: 580, left: 32,  rotate:  10 },
-  { color: "#ED8B5C", size: 22, top: 640, left: 354, rotate: -18 },
-  { color: "#45C4B0", size: 18, top: 80,  left: 290, rotate:  28 },
+const SCREEN_H = Dimensions.get("window").height;
+
+// Floating decorative 3D blocks — slowly drift down forever
+const BG_BLOCKS: {
+  color: string;
+  size: number;
+  startTop: number;
+  left: number;
+  rotate: number;
+  duration: number;
+}[] = [
+  { color: "#F2B84B", size: 38, startTop: 100, left: 24,  rotate: -14, duration: 22000 },
+  { color: "#B084DC", size: 32, startTop: 170, left: 332, rotate:  20, duration: 26000 },
+  { color: "#5DADE2", size: 28, startTop: 380, left: 18,  rotate: -8,  duration: 24000 },
+  { color: "#E76F61", size: 30, startTop: 410, left: 348, rotate:  16, duration: 28000 },
+  { color: "#7FB77E", size: 26, startTop: 580, left: 32,  rotate:  10, duration: 23000 },
+  { color: "#ED8B5C", size: 22, startTop: 640, left: 354, rotate: -18, duration: 25000 },
+  { color: "#45C4B0", size: 18, startTop: 80,  left: 290, rotate:  28, duration: 21000 },
 ];
 
 function DecorativeBlock({
-  color, size, top, left, rotate,
+  color, size, startTop, left, rotate, duration,
 }: typeof BG_BLOCKS[number]) {
+  const ty = useSharedValue(startTop);
+
+  useEffect(() => {
+    const offBottom = SCREEN_H + size + 40;
+    const offTop = -size - 40;
+    const totalDist = offBottom - offTop;
+    const remainingDist = offBottom - startTop;
+    const firstDur = Math.max(1, duration * (remainingDist / totalDist));
+
+    ty.value = withSequence(
+      withTiming(offBottom, { duration: firstDur, easing: Easing.linear }),
+      withRepeat(
+        withSequence(
+          withTiming(offTop, { duration: 0 }),
+          withTiming(offBottom, { duration, easing: Easing.linear }),
+        ),
+        -1,
+        false,
+      ),
+    );
+  }, [ty, startTop, size, duration]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: ty.value - startTop }, { rotate: `${rotate}deg` }],
+  }));
+
   return (
-    <View
+    <Animated.View
       pointerEvents="none"
       style={[
         {
           position: "absolute",
-          top,
+          top: startTop,
           left,
-          transform: [{ rotate: `${rotate}deg` }],
         },
+        animStyle,
         blockShadow,
       ]}
     >
       <PuffyBlock color={color} size={size} />
-    </View>
+    </Animated.View>
   );
 }
 
