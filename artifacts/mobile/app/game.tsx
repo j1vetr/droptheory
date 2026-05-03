@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -29,7 +30,7 @@ import GameBoard, {
   PlacedCellAnim,
 } from "@/components/GameBoard";
 import GameOverModal from "@/components/GameOverModal";
-import PieceTray from "@/components/PieceTray";
+import PieceTray, { TRAY_HEIGHT } from "@/components/PieceTray";
 import ScorePopup from "@/components/ScorePopup";
 import { useLanguage } from "@/context/LanguageContext";
 import {
@@ -222,10 +223,8 @@ export default function GameScreen() {
         for (let r = 0; r < BOARD_SIZE; r++) allCells.push({ r, c });
       }
       if (allCells.length === 0) return;
-      const cr =
-        allCells.reduce((s, p) => s + p.r, 0) / allCells.length;
-      const cc =
-        allCells.reduce((s, p) => s + p.c, 0) / allCells.length;
+      const cr = allCells.reduce((s, p) => s + p.r, 0) / allCells.length;
+      const cc = allCells.reduce((s, p) => s + p.c, 0) / allCells.length;
       const px = x + cc * cs + cs / 2 - 18;
       const py = y + cr * cs + cs / 2 - 12;
       const id = ++popupIdRef.current;
@@ -431,23 +430,32 @@ export default function GameScreen() {
       />
 
       <View style={styles.header}>
-        <Pressable onPress={handleBack} style={styles.headerBtn}>
-          <Text style={styles.headerBtnText}>←</Text>
+        <Pressable onPress={handleBack} style={styles.iconBtn} hitSlop={6}>
+          <Ionicons name="chevron-back" size={22} color="#C8B89A" />
         </Pressable>
-        <View style={styles.scores}>
-          <View style={styles.scoreChip}>
-            <Text style={styles.scoreLabel}>{t.score}</Text>
+
+        <View style={styles.scoreBanner}>
+          <View style={styles.scoreSide}>
+            <View style={styles.scoreLabelRow}>
+              <Ionicons name="sparkles" size={10} color="#7A7266" />
+              <Text style={styles.scoreLabel}>{t.score}</Text>
+            </View>
             <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
           </View>
-          <View style={[styles.scoreChip, styles.bestChip]}>
-            <Text style={styles.scoreLabel}>{t.best}</Text>
+          <View style={styles.scoreDivider} />
+          <View style={styles.scoreSide}>
+            <View style={styles.scoreLabelRow}>
+              <Ionicons name="trophy" size={11} color="#B07E28" />
+              <Text style={[styles.scoreLabel, styles.bestLabel]}>{t.best}</Text>
+            </View>
             <Text style={[styles.scoreValue, styles.bestValue]}>
               {bestScore.toLocaleString()}
             </Text>
           </View>
         </View>
-        <Pressable onPress={restart} style={styles.headerBtn}>
-          <Text style={styles.headerBtnText}>↺</Text>
+
+        <Pressable onPress={restart} style={styles.iconBtn} hitSlop={6}>
+          <Ionicons name="refresh" size={20} color="#C8B89A" />
         </Pressable>
       </View>
 
@@ -466,7 +474,7 @@ export default function GameScreen() {
         />
       </View>
 
-      <View style={[styles.tray, { width: boardSize }]}>
+      <View style={[styles.trayWrapper, { width: boardSize }]}>
         <PieceTray
           pieces={pieces}
           panHandlers={panResponders.map((pr) => pr.panHandlers)}
@@ -510,63 +518,80 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#111118",
     alignItems: "center",
+    justifyContent: "space-between",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 6,
-    gap: 8,
-  },
-  headerBtn: {
-    width: 42,
-    height: 42,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderRadius: 21,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-  },
-  headerBtnText: {
-    fontSize: 20,
-    color: "#7A7266",
-  },
-  scores: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     gap: 10,
   },
-  scoreChip: {
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 18,
+  iconBtn: {
+    width: 40,
+    height: 40,
     alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.04)",
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
-    minWidth: 78,
   },
-  bestChip: {
-    borderColor: "rgba(200,169,110,0.22)",
-    backgroundColor: "rgba(200,169,110,0.06)",
+  scoreBanner: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "stretch",
+    justifyContent: "space-around",
+    backgroundColor: "rgba(22,22,30,0.85)",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(200,169,110,0.18)",
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.35,
+        shadowRadius: 10,
+      },
+      android: { elevation: 6 },
+      default: {},
+    }),
+  },
+  scoreSide: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  scoreDivider: {
+    width: 1,
+    backgroundColor: "rgba(200,169,110,0.20)",
+    marginVertical: 4,
+  },
+  scoreLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginBottom: 2,
   },
   scoreLabel: {
     fontSize: 9,
-    fontFamily: "Inter_500Medium",
-    color: "#6B6354",
-    letterSpacing: 2,
+    fontFamily: "Inter_600SemiBold",
+    color: "#7A7266",
+    letterSpacing: 2.2,
     textTransform: "uppercase",
-    marginBottom: 2,
+  },
+  bestLabel: {
+    color: "#B07E28",
   },
   scoreValue: {
-    fontSize: 19,
+    fontSize: 20,
     fontFamily: "Inter_700Bold",
     color: "#F0EDE8",
+    letterSpacing: 0.3,
   },
   bestValue: {
     color: "#D4A83A",
@@ -583,9 +608,11 @@ const styles = StyleSheet.create({
       default: {},
     }),
   },
-  tray: {
-    flex: 1,
+  trayWrapper: {
+    height: TRAY_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 12,
+    marginBottom: 8,
   },
 });

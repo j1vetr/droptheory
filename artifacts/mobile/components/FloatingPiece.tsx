@@ -46,9 +46,9 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize, isValid }
                   width: cellSize - 1,
                   height: cellSize - 1,
                   backgroundColor: piece.color,
-                  borderRadius: 5,
-                  borderWidth: 0.5,
-                  borderColor: "rgba(255,255,255,0.18)",
+                  borderRadius: 6,
+                  borderWidth: 0.8,
+                  borderColor: "rgba(255,255,255,0.20)",
                   overflow: "hidden",
                 }}
               >
@@ -56,8 +56,8 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize, isValid }
                   style={{
                     position: "absolute",
                     top: 0, left: 0, right: 0,
-                    height: "30%",
-                    backgroundColor: "rgba(255,255,255,0.22)",
+                    height: "36%",
+                    backgroundColor: "rgba(255,255,255,0.26)",
                     borderTopLeftRadius: 5,
                     borderTopRightRadius: 5,
                   }}
@@ -66,8 +66,8 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize, isValid }
                   style={{
                     position: "absolute",
                     bottom: 0, left: 0, right: 0,
-                    height: "18%",
-                    backgroundColor: "rgba(0,0,0,0.20)",
+                    height: "22%",
+                    backgroundColor: "rgba(0,0,0,0.32)",
                     borderBottomLeftRadius: 5,
                     borderBottomRightRadius: 5,
                   }}

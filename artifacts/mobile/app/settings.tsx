@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -37,11 +38,11 @@ export default function SettingsScreen() {
       />
 
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+        <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={6}>
+          <Ionicons name="chevron-back" size={22} color="#C8B89A" />
         </Pressable>
         <Text style={styles.headerTitle}>{t.settings}</Text>
-        <View style={{ width: 44 }} />
+        <View style={{ width: 40 }} />
       </View>
 
       <View style={styles.content}>
@@ -114,19 +115,15 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(255,255,255,0.06)",
   },
   backBtn: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.04)",
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.07)",
+    borderColor: "rgba(255,255,255,0.08)",
     marginLeft: 8,
-  },
-  backText: {
-    fontSize: 20,
-    color: "#7A7266",
   },
   headerTitle: {
     flex: 1,
