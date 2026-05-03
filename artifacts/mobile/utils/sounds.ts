@@ -10,7 +10,12 @@ const SOURCES: Record<SoundName, number> = {
   best: require("../assets/sounds/best.wav"),
 };
 
-const players: Partial<Record<SoundName, AudioPlayer>> = {};
+const POOL_SIZE: Partial<Record<SoundName, number>> = {
+  clear: 4,
+};
+
+const players: Partial<Record<SoundName, AudioPlayer[]>> = {};
+const cursor: Partial<Record<SoundName, number>> = {};
 let initialized = false;
 let enabled = true;
 
@@ -27,11 +32,17 @@ async function ensureInit() {
     // non-fatal on web / some platforms
   }
   (Object.keys(SOURCES) as SoundName[]).forEach((name) => {
-    try {
-      players[name] = createAudioPlayer(SOURCES[name]);
-    } catch {
-      // ignore — playSound calls will be no-ops
+    const size = POOL_SIZE[name] ?? 1;
+    const pool: AudioPlayer[] = [];
+    for (let i = 0; i < size; i += 1) {
+      try {
+        pool.push(createAudioPlayer(SOURCES[name]));
+      } catch {
+        // ignore — playSound calls will be no-ops
+      }
     }
+    players[name] = pool;
+    cursor[name] = 0;
   });
 }
 
@@ -46,8 +57,11 @@ export function isSoundEnabled() {
 export function playSound(name: SoundName) {
   if (!enabled) return;
   ensureInit().then(() => {
-    const p = players[name];
-    if (!p) return;
+    const pool = players[name];
+    if (!pool || pool.length === 0) return;
+    const idx = cursor[name] ?? 0;
+    const p = pool[idx % pool.length];
+    cursor[name] = (idx + 1) % pool.length;
     try {
       p.seekTo(0);
       p.play();

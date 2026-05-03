@@ -78,7 +78,14 @@ export function fxLineClear(cascadeCount: number, linesThisStep: number) {
         : Haptics.ImpactFeedbackStyle.Medium
     );
   }
-  playSound(cascadeCount > 1 || linesThisStep > 1 ? "combo" : "clear");
+  const hits = Math.min(4, Math.max(1, linesThisStep + (cascadeCount > 1 ? 1 : 0)));
+  for (let i = 0; i < hits; i += 1) {
+    if (i === 0) {
+      playSound("clear");
+    } else {
+      setTimeout(() => playSound("clear"), i * 90);
+    }
+  }
 }
 
 export function fxGameOver(isNewBest: boolean) {
