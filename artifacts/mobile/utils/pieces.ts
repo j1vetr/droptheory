@@ -49,14 +49,14 @@ const PIECE_SHAPES: Shape[] = [
 
 // Rich, saturated-but-calm palette — premium puzzle tile colors
 export const BLOCK_COLORS = [
-  "#2D6494", // deep ocean blue
-  "#B05730", // warm terracotta
-  "#4B7A5A", // sage green
-  "#2E7B8A", // dusty teal
-  "#B07E28", // warm amber
-  "#A84E6E", // dusty rose
-  "#6A59A4", // soft lavender
-  "#327068", // seafoam green
+  "#5DADE2", // soft sky blue
+  "#45C4B0", // turquoise teal
+  "#7FB77E", // muted spring green
+  "#F2B84B", // warm amber
+  "#E76F61", // coral red
+  "#B084DC", // soft lavender
+  "#D87FBE", // dusty magenta
+  "#ED8B5C", // terracotta orange
 ];
 
 function generateId(): string {

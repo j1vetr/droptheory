@@ -58,9 +58,9 @@ const blockShadow = Platform.select({
 
 // Hero mini-board sample composition — uses every palette color
 const HERO_LAYOUT: (string | null)[][] = [
-  [null,      "#2D6494", "#2D6494", null,      "#6A59A4", "#B07E28"],
-  ["#A84E6E", "#A84E6E", "#2D6494", "#4B7A5A", "#4B7A5A", "#B07E28"],
-  ["#A84E6E", null,      "#327068", "#4B7A5A", "#2E7B8A", "#2E7B8A"],
+  [null,      "#5DADE2", "#5DADE2", null,      "#B084DC", "#F2B84B"],
+  ["#E76F61", "#E76F61", "#5DADE2", "#7FB77E", "#7FB77E", "#F2B84B"],
+  ["#E76F61", null,      "#45C4B0", "#7FB77E", "#45C4B0", "#45C4B0"],
 ];
 
 const HERO_CELL = 30;
@@ -108,13 +108,13 @@ function HeroMiniBoard() {
 
 // Floating decorative 3D blocks scattered around the periphery
 const BG_BLOCKS: { color: string; size: number; top: number; left: number; rotate: number }[] = [
-  { color: "#B07E28", size: 38, top: 100, left: 24,  rotate: -14 },
-  { color: "#6A59A4", size: 32, top: 170, left: 332, rotate:  20 },
-  { color: "#2D6494", size: 28, top: 380, left: 18,  rotate: -8 },
-  { color: "#A84E6E", size: 30, top: 410, left: 348, rotate:  16 },
-  { color: "#4B7A5A", size: 26, top: 580, left: 32,  rotate:  10 },
-  { color: "#B07E28", size: 22, top: 640, left: 354, rotate: -18 },
-  { color: "#2E7B8A", size: 18, top: 80,  left: 290, rotate:  28 },
+  { color: "#F2B84B", size: 38, top: 100, left: 24,  rotate: -14 },
+  { color: "#B084DC", size: 32, top: 170, left: 332, rotate:  20 },
+  { color: "#5DADE2", size: 28, top: 380, left: 18,  rotate: -8 },
+  { color: "#E76F61", size: 30, top: 410, left: 348, rotate:  16 },
+  { color: "#7FB77E", size: 26, top: 580, left: 32,  rotate:  10 },
+  { color: "#ED8B5C", size: 22, top: 640, left: 354, rotate: -18 },
+  { color: "#45C4B0", size: 18, top: 80,  left: 290, rotate:  28 },
 ];
 
 function DecorativeBlock({

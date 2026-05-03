@@ -292,7 +292,7 @@ export default function GameScreen() {
     setPieces(finalPieces);
 
     fxPlace();
-    await sleep(180);
+    await sleep(220);
     setPlacedCells([]);
 
     let totalLines = 0;
@@ -333,7 +333,7 @@ export default function GameScreen() {
       if (falling.length > 0) {
         setBoard(gravityBoard);
         setFallingCells(falling);
-        await sleep(340);
+        await sleep(490);
         setFallingCells([]);
       } else {
         setBoard(gravityBoard);
@@ -418,6 +418,7 @@ export default function GameScreen() {
       row: dragState.ghostRow + dr,
       col: dragState.ghostCol + dc,
       isValid: dragState.isValid,
+      color: dragState.piece.color,
     }));
   }, [dragState]);
 

@@ -1,9 +1,8 @@
 import Animated, {
-  interpolateColor,
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
-  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import React, { useEffect } from "react";
@@ -42,6 +41,7 @@ interface GhostCell {
   row: number;
   col: number;
   isValid: boolean;
+  color: string;
 }
 
 interface Props {
@@ -65,21 +65,67 @@ const boardShadow = Platform.select({
   default: {},
 });
 
-// Scale-in overlay played briefly when a piece is placed
+const GAP = 0.5;
+
+function blockBox(cellSize: number, row: number, col: number) {
+  return {
+    position: "absolute" as const,
+    top: row * cellSize + GAP,
+    left: col * cellSize + GAP,
+    width: cellSize - GAP * 2,
+    height: cellSize - GAP * 2,
+  };
+}
+
+// Block lands with a quick scale-in pop with subtle overshoot
 function AnimatedPlacedCell({
   row,
   col,
   cellSize,
   color,
 }: PlacedCellAnim & { cellSize: number }) {
-  const scale = useSharedValue(0.25);
-  const opacity = useSharedValue(0.9);
+  const scale = useSharedValue(0.85);
 
   useEffect(() => {
-    scale.value = withSpring(1, { damping: 9, stiffness: 280 });
+    scale.value = withSequence(
+      withTiming(1.06, { duration: 110, easing: Easing.out(Easing.quad) }),
+      withTiming(1, { duration: 90, easing: Easing.out(Easing.quad) })
+    );
+  }, [scale]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const inner = cellSize - GAP * 2;
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[blockBox(cellSize, row, col), { zIndex: 10 }, animStyle]}
+    >
+      <PuffyBlock color={color} size={inner} />
+    </Animated.View>
+  );
+}
+
+// Cleared cells: tiny overshoot pop, then scale down + fade out
+function AnimatedClearingCell({
+  row,
+  col,
+  cellSize,
+  color,
+}: ClearingCellAnim & { cellSize: number }) {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    scale.value = withSequence(
+      withTiming(1.18, { duration: 110, easing: Easing.out(Easing.quad) }),
+      withTiming(0.3, { duration: 270, easing: Easing.in(Easing.quad) })
+    );
     opacity.value = withSequence(
-      withTiming(0.9, { duration: 80 }),
-      withTiming(0, { duration: 260 })
+      withTiming(1, { duration: 110 }),
+      withTiming(0, { duration: 270, easing: Easing.in(Easing.quad) })
     );
   }, [opacity, scale]);
 
@@ -88,80 +134,18 @@ function AnimatedPlacedCell({
     opacity: opacity.value,
   }));
 
+  const inner = cellSize - GAP * 2;
   return (
     <Animated.View
       pointerEvents="none"
-      style={[
-        {
-          position: "absolute",
-          top: row * cellSize,
-          left: col * cellSize,
-          width: cellSize,
-          height: cellSize,
-          zIndex: 10,
-        },
-        animStyle,
-      ]}
+      style={[blockBox(cellSize, row, col), { zIndex: 11 }, animStyle]}
     >
-      <PuffyBlock color={color} size={cellSize} />
+      <PuffyBlock color={color} size={inner} />
     </Animated.View>
   );
 }
 
-// Shimmer-dissolve overlay for cleared rows/columns
-function AnimatedClearingCell({
-  row,
-  col,
-  cellSize,
-  color,
-}: ClearingCellAnim & { cellSize: number }) {
-  const progress = useSharedValue(0);
-  const scale = useSharedValue(1);
-
-  useEffect(() => {
-    progress.value = withSequence(
-      withTiming(1, { duration: 160 }),
-      withTiming(0, { duration: 240 })
-    );
-    scale.value = withSequence(
-      withTiming(1, { duration: 160 }),
-      withTiming(1.12, { duration: 240 })
-    );
-  }, [progress, scale]);
-
-  const animStyle = useAnimatedStyle(() => {
-    const bg = interpolateColor(
-      progress.value,
-      [0, 0.5, 1],
-      [color, "#E8D090", "rgba(232,208,144,0)"]
-    );
-    return {
-      backgroundColor: bg,
-      opacity: progress.value < 0.05 ? progress.value * 20 : 1,
-      transform: [{ scale: scale.value }],
-    };
-  });
-
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        {
-          position: "absolute",
-          top: row * cellSize + 1,
-          left: col * cellSize + 1,
-          width: cellSize - 2,
-          height: cellSize - 2,
-          borderRadius: 5,
-          zIndex: 11,
-        },
-        animStyle,
-      ]}
-    />
-  );
-}
-
-// Gravity fall: cell springs from its old row position into the final board position
+// Falls naturally, then a tiny vertical bounce on landing
 function AnimatedFallingCell({
   fromRow,
   toRow,
@@ -173,33 +157,24 @@ function AnimatedFallingCell({
   const translateY = useSharedValue(initialOffset);
 
   useEffect(() => {
-    translateY.value = withSpring(0, {
-      damping: 11,
-      stiffness: 200,
-      overshootClamping: false,
-    });
+    translateY.value = withSequence(
+      withTiming(0, { duration: 280, easing: Easing.in(Easing.quad) }),
+      withTiming(-3, { duration: 80, easing: Easing.out(Easing.quad) }),
+      withTiming(0, { duration: 110, easing: Easing.out(Easing.quad) })
+    );
   }, [translateY]);
 
   const animStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));
 
+  const inner = cellSize - GAP * 2;
   return (
     <Animated.View
       pointerEvents="none"
-      style={[
-        {
-          position: "absolute",
-          top: toRow * cellSize,
-          left: col * cellSize,
-          width: cellSize,
-          height: cellSize,
-          zIndex: 5,
-        },
-        animStyle,
-      ]}
+      style={[blockBox(cellSize, toRow, col), { zIndex: 5 }, animStyle]}
     >
-      <PuffyBlock color={color} size={cellSize} />
+      <PuffyBlock color={color} size={inner} />
     </Animated.View>
   );
 }
@@ -329,15 +304,18 @@ export default function GameBoard({
   fallingCells = [],
   particleBursts = [],
 }: Props) {
-  const ghostMap = new Map<string, boolean>();
+  const ghostMap = new Map<string, { isValid: boolean; color: string }>();
   for (const g of ghostCells) {
     if (g.row >= 0 && g.row < BOARD_SIZE && g.col >= 0 && g.col < BOARD_SIZE) {
-      ghostMap.set(`${g.row},${g.col}`, g.isValid);
+      ghostMap.set(`${g.row},${g.col}`, { isValid: g.isValid, color: g.color });
     }
   }
 
   const fallingDestSet = new Set(fallingCells.map((fc) => `${fc.toRow},${fc.col}`));
   const clearingSet = new Set(clearingCells.map((cc) => `${cc.row},${cc.col}`));
+  const placedSet = new Set(placedCells.map((pc) => `${pc.row},${pc.col}`));
+
+  const inner = cellSize - GAP * 2;
 
   return (
     <View style={[styles.boardOuter, boardShadow]}>
@@ -354,6 +332,10 @@ export default function GameBoard({
             const ghost = ghostMap.get(key);
             const hiddenByFall = fallingDestSet.has(key);
             const hiddenByClear = clearingSet.has(key);
+            const inPlaced = placedSet.has(key);
+            const showStatic = !!color && !hiddenByFall && !hiddenByClear && !inPlaced;
+            const showGhost = !color && !!ghost;
+            const isEmpty = !showStatic && !showGhost;
 
             return (
               <View
@@ -361,14 +343,34 @@ export default function GameBoard({
                 style={[
                   styles.cell,
                   { width: cellSize, height: cellSize },
-                  (!color || hiddenByFall || hiddenByClear) && styles.empty,
-                  ghost !== undefined &&
-                    (ghost ? styles.ghostValid : styles.ghostInvalid),
+                  isEmpty && styles.empty,
                 ]}
               >
-                {color && !hiddenByFall && !hiddenByClear && (
-                  <View style={StyleSheet.absoluteFill}>
-                    <PuffyBlock color={color} size={cellSize} />
+                {showStatic && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: GAP,
+                      left: GAP,
+                      width: inner,
+                      height: inner,
+                    }}
+                  >
+                    <PuffyBlock color={color!} size={inner} />
+                  </View>
+                )}
+                {showGhost && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: GAP,
+                      left: GAP,
+                      width: inner,
+                      height: inner,
+                      opacity: ghost!.isValid ? 0.42 : 0.18,
+                    }}
+                  >
+                    <PuffyBlock color={ghost!.color} size={inner} />
                   </View>
                 )}
               </View>
@@ -438,23 +440,10 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   cell: {
-    borderWidth: 0.5,
-    borderColor: "rgba(255,255,255,0.05)",
     position: "relative",
     overflow: "hidden",
-    borderRadius: 4,
   },
   empty: {
     backgroundColor: "rgba(255,255,255,0.025)",
-  },
-  ghostValid: {
-    backgroundColor: "rgba(176,126,40,0.32)",
-    borderColor: "rgba(200,169,110,0.65)",
-    borderRadius: 5,
-  },
-  ghostInvalid: {
-    backgroundColor: "rgba(168,78,80,0.22)",
-    borderColor: "rgba(180,80,80,0.45)",
-    borderRadius: 5,
   },
 });

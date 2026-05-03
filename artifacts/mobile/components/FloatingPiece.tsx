@@ -1,5 +1,12 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
 import PuffyBlock from "@/components/PuffyBlock";
 import { GamePiece, getPieceBounds } from "@/utils/pieces";
@@ -17,21 +24,43 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize, isValid }
   const cells = new Set(piece.shape.map(([r, c]) => `${r - bounds.minRow},${c - bounds.minCol}`));
   const invalid = isValid === false;
 
+  const shake = useSharedValue(0);
+  const prevInvalid = useRef(false);
+
+  useEffect(() => {
+    if (invalid && !prevInvalid.current) {
+      shake.value = withSequence(
+        withTiming(-5, { duration: 50, easing: Easing.linear }),
+        withTiming(5, { duration: 50 }),
+        withTiming(-3, { duration: 40 }),
+        withTiming(3, { duration: 40 }),
+        withTiming(0, { duration: 50 })
+      );
+    }
+    prevInvalid.current = invalid;
+  }, [invalid, shake]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shake.value }, { scale: 1.10 }],
+  }));
+
   return (
     <View
       pointerEvents="none"
       style={[StyleSheet.absoluteFillObject, { zIndex: 999 }]}
     >
-      <View
-        style={{
-          position: "absolute",
-          left: pageX - cellSize * 0.5,
-          top: pageY - cellSize * 0.5,
-          width: bounds.cols * cellSize,
-          height: bounds.rows * cellSize,
-          opacity: invalid ? 0.42 : 0.95,
-          transform: [{ scale: 1.10 }],
-        }}
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            left: pageX - cellSize * 0.5,
+            top: pageY - cellSize * 0.5,
+            width: bounds.cols * cellSize,
+            height: bounds.rows * cellSize,
+            opacity: invalid ? 0.55 : 0.95,
+          },
+          animStyle,
+        ]}
       >
         {Array.from({ length: bounds.rows }, (_, r) =>
           Array.from({ length: bounds.cols }, (_, c) => {
@@ -53,7 +82,7 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize, isValid }
             );
           })
         )}
-      </View>
+      </Animated.View>
     </View>
   );
 }

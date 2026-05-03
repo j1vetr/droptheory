@@ -9,19 +9,32 @@ interface Props {
   showSpecular?: boolean;
 }
 
+function lighten(hex: string, amount: number, alpha = 0.55): string {
+  const h = hex.replace("#", "");
+  if (h.length !== 6) return `rgba(255,255,255,${alpha})`;
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  const lr = Math.round(r + (255 - r) * amount);
+  const lg = Math.round(g + (255 - g) * amount);
+  const lb = Math.round(b + (255 - b) * amount);
+  return `rgba(${lr},${lg},${lb},${alpha})`;
+}
+
 /**
- * Realistic 3D-looking block with:
+ * Premium 3D-looking block with:
  *  - Base color
  *  - Diagonal volumetric sheen (top-left bright → bottom-right dark)
  *  - Top inner-edge highlight stripe (bevel)
  *  - Bottom inner-edge dark chamfer
- *  - Optional small specular dot (only on larger blocks)
- *  - Outer dark contour border for separation
+ *  - Hairline lighter-tint border in the block's own color family
+ *  - Optional small specular dot on larger blocks
  */
 export default function PuffyBlock({ color, size, radius, showSpecular }: Props) {
-  const r = radius ?? Math.max(5, size * 0.22);
+  const r = radius ?? Math.max(4, size * 0.20);
   const innerR = Math.max(2, r - 1);
   const includeSpecular = showSpecular ?? size >= 22;
+  const borderColor = lighten(color, 0.45, 0.55);
 
   return (
     <View
@@ -31,7 +44,7 @@ export default function PuffyBlock({ color, size, radius, showSpecular }: Props)
         backgroundColor: color,
         borderRadius: r,
         borderWidth: 1,
-        borderColor: "rgba(0,0,0,0.34)",
+        borderColor,
         overflow: "hidden",
       }}
     >
@@ -41,10 +54,10 @@ export default function PuffyBlock({ color, size, radius, showSpecular }: Props)
           "rgba(255,255,255,0.55)",
           "rgba(255,255,255,0.18)",
           "rgba(255,255,255,0.00)",
-          "rgba(0,0,0,0.20)",
-          "rgba(0,0,0,0.42)",
+          "rgba(0,0,0,0.18)",
+          "rgba(0,0,0,0.36)",
         ]}
-        locations={[0, 0.18, 0.5, 0.82, 1]}
+        locations={[0, 0.20, 0.55, 0.85, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -58,7 +71,7 @@ export default function PuffyBlock({ color, size, radius, showSpecular }: Props)
           left: 0,
           right: 0,
           height: Math.max(2, size * 0.10),
-          backgroundColor: "rgba(255,255,255,0.30)",
+          backgroundColor: "rgba(255,255,255,0.32)",
           borderTopLeftRadius: innerR,
           borderTopRightRadius: innerR,
         }}
@@ -71,8 +84,8 @@ export default function PuffyBlock({ color, size, radius, showSpecular }: Props)
           bottom: 0,
           left: 0,
           right: 0,
-          height: Math.max(2, size * 0.12),
-          backgroundColor: "rgba(0,0,0,0.30)",
+          height: Math.max(2, size * 0.13),
+          backgroundColor: "rgba(0,0,0,0.28)",
           borderBottomLeftRadius: innerR,
           borderBottomRightRadius: innerR,
         }}
@@ -83,12 +96,12 @@ export default function PuffyBlock({ color, size, radius, showSpecular }: Props)
         <View
           style={{
             position: "absolute",
-            top: size * 0.14,
+            top: size * 0.13,
             left: size * 0.16,
-            width: size * 0.30,
-            height: size * 0.16,
+            width: size * 0.32,
+            height: size * 0.15,
             borderRadius: size * 0.10,
-            backgroundColor: "rgba(255,255,255,0.42)",
+            backgroundColor: "rgba(255,255,255,0.45)",
           }}
         />
       )}
