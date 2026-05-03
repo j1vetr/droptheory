@@ -32,7 +32,7 @@ export default function SettingsScreen() {
     >
       <StatusBar style="light" />
       <LinearGradient
-        colors={["#262148", "#181432", "#0F0C22"]}
+        colors={["#3D2670", "#241548", "#13082B"]}
         style={StyleSheet.absoluteFillObject}
         pointerEvents="none"
       />
@@ -104,7 +104,7 @@ function LanguageBtn({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#181432",
+    backgroundColor: "#241548",
   },
   header: {
     flexDirection: "row",

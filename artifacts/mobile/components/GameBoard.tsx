@@ -98,7 +98,9 @@ function AnimatedPlacedCell({
           width: cellSize,
           height: cellSize,
           backgroundColor: color,
-          borderRadius: 5,
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: "rgba(0,0,0,0.32)",
           zIndex: 10,
           overflow: "hidden",
         },
@@ -109,10 +111,20 @@ function AnimatedPlacedCell({
         style={{
           position: "absolute",
           top: 0, left: 0, right: 0,
-          height: "30%",
-          backgroundColor: "rgba(255,255,255,0.20)",
-          borderTopLeftRadius: 5,
-          borderTopRightRadius: 5,
+          height: "44%",
+          backgroundColor: "rgba(255,255,255,0.36)",
+          borderTopLeftRadius: 7,
+          borderTopRightRadius: 7,
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0, left: 0, right: 0,
+          height: "28%",
+          backgroundColor: "rgba(0,0,0,0.42)",
+          borderBottomLeftRadius: 7,
+          borderBottomRightRadius: 7,
         }}
       />
     </Animated.View>
@@ -206,7 +218,9 @@ function AnimatedFallingCell({
           width: cellSize,
           height: cellSize,
           backgroundColor: color,
-          borderRadius: 5,
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: "rgba(0,0,0,0.32)",
           zIndex: 5,
           overflow: "hidden",
         },
@@ -217,20 +231,20 @@ function AnimatedFallingCell({
         style={{
           position: "absolute",
           top: 0, left: 0, right: 0,
-          height: "30%",
-          backgroundColor: "rgba(255,255,255,0.18)",
-          borderTopLeftRadius: 5,
-          borderTopRightRadius: 5,
+          height: "44%",
+          backgroundColor: "rgba(255,255,255,0.36)",
+          borderTopLeftRadius: 7,
+          borderTopRightRadius: 7,
         }}
       />
       <View
         style={{
           position: "absolute",
           bottom: 0, left: 0, right: 0,
-          height: "18%",
-          backgroundColor: "rgba(0,0,0,0.22)",
-          borderBottomLeftRadius: 5,
-          borderBottomRightRadius: 5,
+          height: "28%",
+          backgroundColor: "rgba(0,0,0,0.42)",
+          borderBottomLeftRadius: 7,
+          borderBottomRightRadius: 7,
         }}
       />
     </Animated.View>
@@ -460,10 +474,11 @@ export default function GameBoard({
 
 const styles = StyleSheet.create({
   boardOuter: {
-    borderRadius: 12,
-    backgroundColor: "#1A1638",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.10)",
+    borderRadius: 18,
+    backgroundColor: "#1B0F38",
+    borderWidth: 1.5,
+    borderColor: "rgba(200,169,110,0.30)",
+    padding: 6,
   },
   board: {
     flexDirection: "row",
@@ -480,32 +495,32 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   filled: {
-    borderColor: "rgba(255,255,255,0.20)",
-    borderRadius: 6,
-    borderWidth: 0.8,
+    borderColor: "rgba(0,0,0,0.32)",
+    borderRadius: 8,
+    borderWidth: 1,
   },
   empty: {
-    backgroundColor: "rgba(255,255,255,0.022)",
+    backgroundColor: "rgba(255,255,255,0.025)",
   },
   cellHighlight: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: "36%",
-    backgroundColor: "rgba(255,255,255,0.26)",
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+    height: "44%",
+    backgroundColor: "rgba(255,255,255,0.36)",
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
   },
   cellShadow: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: "22%",
-    backgroundColor: "rgba(0,0,0,0.32)",
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
+    height: "28%",
+    backgroundColor: "rgba(0,0,0,0.42)",
+    borderBottomLeftRadius: 7,
+    borderBottomRightRadius: 7,
   },
   ghostValid: {
     backgroundColor: "rgba(176,126,40,0.32)",

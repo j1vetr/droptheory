@@ -61,9 +61,9 @@ function PiecePreview({
                 left: c * cs,
                 top: r * cs,
                 backgroundColor: piece.color,
-                borderColor: "rgba(255,255,255,0.18)",
-                borderWidth: 0.7,
-                borderRadius: 4,
+                borderColor: "rgba(0,0,0,0.32)",
+                borderWidth: 1,
+                borderRadius: 7,
                 overflow: "hidden",
               }}
             >
@@ -73,10 +73,10 @@ function PiecePreview({
                   top: 0,
                   left: 0,
                   right: 0,
-                  height: "32%",
-                  backgroundColor: "rgba(255,255,255,0.24)",
-                  borderTopLeftRadius: 4,
-                  borderTopRightRadius: 4,
+                  height: "44%",
+                  backgroundColor: "rgba(255,255,255,0.36)",
+                  borderTopLeftRadius: 6,
+                  borderTopRightRadius: 6,
                 }}
               />
               <View
@@ -85,10 +85,10 @@ function PiecePreview({
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  height: "22%",
-                  backgroundColor: "rgba(0,0,0,0.28)",
-                  borderBottomLeftRadius: 4,
-                  borderBottomRightRadius: 4,
+                  height: "28%",
+                  backgroundColor: "rgba(0,0,0,0.42)",
+                  borderBottomLeftRadius: 6,
+                  borderBottomRightRadius: 6,
                 }}
               />
             </View>

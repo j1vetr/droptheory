@@ -28,6 +28,9 @@ export interface Translations {
   goHome: string;
   tagline: string;
   eyebrow: string;
+  leaderboard: string;
+  dailyChallenge: string;
+  rewards: string;
 }
 
 const en: Translations = {
@@ -58,6 +61,9 @@ const en: Translations = {
   goHome: "Go to home screen",
   tagline: "Think Before It Falls",
   eyebrow: "Puzzle · Gravity · Combo",
+  leaderboard: "Leaderboard",
+  dailyChallenge: "Daily Challenge",
+  rewards: "Rewards",
 };
 
 const tr: Translations = {
@@ -88,6 +94,9 @@ const tr: Translations = {
   goHome: "Ana ekrana git",
   tagline: "Düşmeden Önce Düşün",
   eyebrow: "Bulmaca · Yerçekimi · Kombo",
+  leaderboard: "Sıralama",
+  dailyChallenge: "Günlük Görev",
+  rewards: "Ödüller",
 };
 
 export const translations: Record<Language, Translations> = { en, tr };
