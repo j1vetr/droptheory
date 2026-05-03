@@ -3,7 +3,7 @@ import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from "expo-audio";
 type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back" | "toggle" | "button" | "score" | "cancel" | "wrong" | "pickup";
 
 const SOURCES: Record<SoundName, number> = {
-  place: require("../assets/sounds/place.wav"),
+  place: require("../assets/sounds/place.mp3"),
   clear: require("../assets/sounds/clear.wav"),
   combo: require("../assets/sounds/combo.mp3"),
   gameover: require("../assets/sounds/gameover.wav"),
