@@ -56,7 +56,7 @@ const en: Translations = {
   back: "Back",
   notFound: "This screen doesn't exist.",
   goHome: "Go to home screen",
-  tagline: "Think before it falls",
+  tagline: "Think Before It Falls",
   eyebrow: "Puzzle · Gravity · Combo",
 };
 
@@ -86,7 +86,7 @@ const tr: Translations = {
   back: "Geri",
   notFound: "Bu ekran mevcut değil.",
   goHome: "Ana ekrana git",
-  tagline: "Düşmeden önce düşün",
+  tagline: "Düşmeden Önce Düşün",
   eyebrow: "Bulmaca · Yerçekimi · Kombo",
 };
 
