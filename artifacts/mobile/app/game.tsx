@@ -41,6 +41,7 @@ import {
   fxPickup,
   fxPlace,
   fxScore,
+  fxWrong,
 } from "@/utils/feedback";
 import {
   BOARD_SIZE,
@@ -269,11 +270,14 @@ export default function GameScreen() {
     }
 
     const { row, col } = getGridPos(px, py - FINGER_LIFT);
-    if (
-      !(row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE
-        && isValidPlacement(currentBoard, piece.shape, row, col))
-    ) {
+    const onBoard = row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE;
+    if (!onBoard) {
       fxInvalid();
+      setDragState(null);
+      return;
+    }
+    if (!isValidPlacement(currentBoard, piece.shape, row, col)) {
+      fxWrong();
       setDragState(null);
       return;
     }
