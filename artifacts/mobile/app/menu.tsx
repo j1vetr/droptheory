@@ -1,12 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Crown,
-  Gift,
   type LucideIcon,
   Play,
   Settings as SettingsIcon,
-  Star,
-  Trophy,
 } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
@@ -352,11 +349,6 @@ export default function MenuScreen() {
           )}
         </View>
 
-        <View style={styles.footerTabs}>
-          <FooterTab Icon={Trophy} label={t.leaderboard} />
-          <FooterTab Icon={Star} label={t.dailyChallenge} badge />
-          <FooterTab Icon={Gift} label={t.rewards} />
-        </View>
       </ScrollView>
     </View>
   );
@@ -381,26 +373,6 @@ function PrimaryButton({ label, onPress }: { label: string; onPress: () => void 
         </View>
       </LinearGradient>
     </TouchableOpacity>
-  );
-}
-
-function FooterTab({
-  Icon,
-  label,
-  badge,
-}: {
-  Icon: LucideIcon;
-  label: string;
-  badge?: boolean;
-}) {
-  return (
-    <View style={styles.footerTab}>
-      <View style={styles.footerIconWrap}>
-        <Icon size={22} color="#8FC9D9" strokeWidth={2} />
-        {badge && <View style={styles.footerBadge} />}
-      </View>
-      <Text style={styles.footerLabel}>{label.toUpperCase()}</Text>
-    </View>
   );
 }
 
@@ -558,40 +530,5 @@ const styles = StyleSheet.create({
     color: "#7FE0CC",
     letterSpacing: 2.4,
     textTransform: "uppercase",
-  },
-  footerTabs: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    paddingTop: 18,
-    paddingHorizontal: 8,
-    borderTopWidth: 1,
-    borderTopColor: "rgba(127,224,204,0.15)",
-    marginTop: 4,
-  },
-  footerTab: {
-    alignItems: "center",
-    gap: 4,
-    flex: 1,
-  },
-  footerIconWrap: {
-    position: "relative",
-  },
-  footerBadge: {
-    position: "absolute",
-    top: -2,
-    right: -4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#E04848",
-    borderWidth: 1,
-    borderColor: "#241548",
-  },
-  footerLabel: {
-    fontSize: 8,
-    fontFamily: "Inter_600SemiBold",
-    color: "#9A8AB8",
-    letterSpacing: 1.4,
   },
 });
