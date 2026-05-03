@@ -24,6 +24,7 @@ import ComboFeedback from "@/components/ComboFeedback";
 import FloatingPiece from "@/components/FloatingPiece";
 import GameBoard, {
   ClearingCellAnim,
+  FallingCellAnim,
   PlacedCellAnim,
 } from "@/components/GameBoard";
 import GameOverModal from "@/components/GameOverModal";
@@ -57,7 +58,7 @@ interface DragState {
   isValid: boolean;
 }
 
-const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 function buildClearCells(board: Board, rows: number[], cols: number[]): ClearingCellAnim[] {
   const seen = new Set<string>();
@@ -83,6 +84,30 @@ function buildClearCells(board: Board, rows: number[], cols: number[]): Clearing
   return result;
 }
 
+// Compare boards before and after gravity to find cells that moved down
+function computeFallingCells(before: Board, after: Board): FallingCellAnim[] {
+  const result: FallingCellAnim[] = [];
+  for (let col = 0; col < BOARD_SIZE; col++) {
+    const beforeFilled: { row: number; color: string }[] = [];
+    const afterFilled: { row: number; color: string }[] = [];
+    for (let r = 0; r < BOARD_SIZE; r++) {
+      if (before[r][col]) beforeFilled.push({ row: r, color: before[r][col]! });
+      if (after[r][col]) afterFilled.push({ row: r, color: after[r][col]! });
+    }
+    for (let i = 0; i < beforeFilled.length && i < afterFilled.length; i++) {
+      if (beforeFilled[i].row !== afterFilled[i].row) {
+        result.push({
+          fromRow: beforeFilled[i].row,
+          toRow: afterFilled[i].row,
+          col,
+          color: beforeFilled[i].color,
+        });
+      }
+    }
+  }
+  return result;
+}
+
 export default function GameScreen() {
   const { t } = useLanguage();
   const { resume } = useLocalSearchParams<{ resume?: string }>();
@@ -101,12 +126,12 @@ export default function GameScreen() {
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [placedCells, setPlacedCells] = useState<PlacedCellAnim[]>([]);
   const [clearingCells, setClearingCells] = useState<ClearingCellAnim[]>([]);
+  const [fallingCells, setFallingCells] = useState<FallingCellAnim[]>([]);
 
   const boardViewRef = useRef<View>(null);
   const boardLayoutRef = useRef({ x: 0, y: 0, cs: cellSize });
   const gamePhaseRef = useRef<"idle" | "animating">("idle");
 
-  // Stable refs for pan responder closures
   const piecesRef = useRef(pieces);
   const boardRef = useRef(board);
   const scoreRef = useRef(score);
@@ -114,30 +139,27 @@ export default function GameScreen() {
   useEffect(() => { boardRef.current = board; }, [board]);
   useEffect(() => { scoreRef.current = score; }, [score]);
 
-  // Load best score
   useEffect(() => {
     AsyncStorage.getItem(BEST_SCORE_KEY).then((val) => {
       if (val) setBestScore(parseInt(val, 10));
     });
   }, []);
 
-  // Load saved game if resuming
   useEffect(() => {
-    if (resume === "1") {
-      AsyncStorage.getItem(GAME_SAVE_KEY).then((val) => {
-        if (val) {
-          try {
-            const saved = JSON.parse(val);
-            setBoard(saved.board);
-            setPieces(saved.pieces);
-            setScore(saved.score ?? 0);
-          } catch {}
-        }
-      });
-    }
+    if (resume !== "1") return;
+    AsyncStorage.getItem(GAME_SAVE_KEY).then((val) => {
+      if (!val) return;
+      try {
+        const saved = JSON.parse(val) as { board: Board; pieces: (GamePiece | null)[]; score: number };
+        setBoard(saved.board);
+        setPieces(saved.pieces);
+        setScore(saved.score ?? 0);
+      } catch (e) {
+        // Ignore corrupted save data
+      }
+    });
   }, [resume]);
 
-  // Persist best score
   useEffect(() => {
     if (score > bestScore) {
       setBestScore(score);
@@ -180,9 +202,8 @@ export default function GameScreen() {
     [t]
   );
 
-  // Stable drop handler — updated each render, called via ref from PanResponder
   const dropHandlerRef = useRef(
-    (_idx: number, _px: number, _py: number, _pieces: (GamePiece | null)[], _board: Board, _score: number) => {}
+    (_idx: number, _px: number, _py: number, _p: (GamePiece | null)[], _b: Board, _s: number) => {}
   );
 
   dropHandlerRef.current = async (
@@ -213,17 +234,13 @@ export default function GameScreen() {
     gamePhaseRef.current = "animating";
     setDragState(null);
 
-    // Phase 1: Place piece on board
+    // Phase 1: place piece, show scale-in overlay
     let nb = placePiece(currentBoard, piece.shape, row, col, piece.color);
-    const placed: PlacedCellAnim[] = piece.shape.map(([dr, dc]) => ({
-      row: row + dr,
-      col: col + dc,
-      color: piece.color,
-    }));
     setBoard(nb);
-    setPlacedCells(placed);
+    setPlacedCells(
+      piece.shape.map(([dr, dc]) => ({ row: row + dr, col: col + dc, color: piece.color }))
+    );
 
-    // Update pieces tray immediately
     const newPiecesArr = [...currentPieces] as (GamePiece | null)[];
     newPiecesArr[idx] = null;
     const finalPieces = newPiecesArr.every((p) => p === null)
@@ -235,7 +252,7 @@ export default function GameScreen() {
     await sleep(180);
     setPlacedCells([]);
 
-    // Phase 2: Line clear cascade loop
+    // Phase 2: cascade — clear → gravity fall → repeat
     let totalLines = 0;
     let cascadeCount = 0;
     const blocksPlaced = piece.shape.length;
@@ -244,34 +261,42 @@ export default function GameScreen() {
       const { rows: fr, cols: fc } = findFullLines(nb);
       if (fr.length + fc.length === 0) break;
 
-      const clearAnims = buildClearCells(nb, fr, fc);
       totalLines += fr.length + fc.length;
       cascadeCount++;
 
-      setClearingCells(clearAnims);
+      // Flash cleared cells gold
+      setClearingCells(buildClearCells(nb, fr, fc));
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       await sleep(400);
       setClearingCells([]);
 
-      nb = clearLines(nb, fr, fc);
-      nb = applyGravity(nb);
-      setBoard(nb);
-      await sleep(120);
+      // Gravity: compute pre/post states for fall animation
+      const clearedBoard = clearLines(nb, fr, fc);
+      const gravityBoard = applyGravity(clearedBoard);
+      const falling = computeFallingCells(clearedBoard, gravityBoard);
+
+      if (falling.length > 0) {
+        // Show post-gravity board; animated cells fall into place over it
+        setBoard(gravityBoard);
+        setFallingCells(falling);
+        await sleep(340);
+        setFallingCells([]);
+      } else {
+        setBoard(gravityBoard);
+        await sleep(80);
+      }
+
+      nb = gravityBoard;
     }
 
-    // Score
     const addedScore = calculateScore(blocksPlaced, totalLines, cascadeCount);
     const newScore = currentScore + addedScore;
     setScore(newScore);
 
-    if (totalLines > 0) {
-      showComboText(cascadeCount, totalLines);
-    }
+    if (totalLines > 0) showComboText(cascadeCount, totalLines);
 
-    // Persist
     saveGame(nb, finalPieces, newScore);
 
-    // Game over check
     if (isGameOver(nb, finalPieces)) {
       setTimeout(() => {
         clearSave();
@@ -324,7 +349,7 @@ export default function GameScreen() {
           onPanResponderTerminate: () => setDragState(null),
         })
       ),
-    [] // stable — uses refs
+    []
   );
 
   const ghostCells = useMemo(() => {
@@ -346,6 +371,7 @@ export default function GameScreen() {
     setDragState(null);
     setPlacedCells([]);
     setClearingCells([]);
+    setFallingCells([]);
     gamePhaseRef.current = "idle";
   }, [clearSave]);
 
@@ -361,7 +387,6 @@ export default function GameScreen() {
     <View style={[styles.container, { paddingTop: topPad, paddingBottom: bottomPad }]}>
       <StatusBar style="light" />
 
-      {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={handleBack} style={styles.headerBtn}>
           <Text style={styles.headerBtnText}>←</Text>
@@ -384,7 +409,6 @@ export default function GameScreen() {
         </Pressable>
       </View>
 
-      {/* Board */}
       <View
         ref={boardViewRef}
         onLayout={measureBoard}
@@ -396,10 +420,10 @@ export default function GameScreen() {
           cellSize={cellSize}
           placedCells={placedCells}
           clearingCells={clearingCells}
+          fallingCells={fallingCells}
         />
       </View>
 
-      {/* Piece tray */}
       <View style={[styles.tray, { width: boardSize }]}>
         <PieceTray
           pieces={pieces}
@@ -409,7 +433,6 @@ export default function GameScreen() {
         />
       </View>
 
-      {/* Floating piece during drag */}
       {dragState && (
         <FloatingPiece
           piece={dragState.piece}

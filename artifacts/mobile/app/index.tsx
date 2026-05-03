@@ -1,38 +1,16 @@
+import LottieView from "lottie-react-native";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useRef } from "react";
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-let LottieView: any = null;
-if (Platform.OS !== "web") {
-  LottieView = require("lottie-react-native").default;
-}
+import React, { useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function SplashScreen() {
-  const animRef = useRef<any>(null);
-
   useEffect(() => {
-    const fallback = setTimeout(() => {
-      router.replace("/menu");
-    }, 4200);
+    const fallback = setTimeout(() => router.replace("/menu"), 4200);
     return () => clearTimeout(fallback);
   }, []);
 
-  const handleFinish = () => {
-    router.replace("/menu");
-  };
-
-  if (Platform.OS === "web" || !LottieView) {
-    return (
-      <View style={styles.container}>
-        <StatusBar style="light" />
-        <Text style={styles.webTitle}>DROP THEORY</Text>
-        <TouchableOpacity style={styles.webSkip} onPress={handleFinish}>
-          <Text style={styles.webSkipText}>▶</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  const handleFinish = () => router.replace("/menu");
 
   return (
     <TouchableOpacity
@@ -42,7 +20,6 @@ export default function SplashScreen() {
     >
       <StatusBar style="light" />
       <LottieView
-        ref={animRef}
         source={require("../assets/animations/intro.json")}
         autoPlay
         loop={false}
@@ -73,19 +50,5 @@ const styles = StyleSheet.create({
     color: "#C8A96E",
     letterSpacing: 6,
     textTransform: "uppercase",
-  },
-  webTitle: {
-    fontSize: 22,
-    fontFamily: "Inter_700Bold",
-    color: "#C8A96E",
-    letterSpacing: 8,
-  },
-  webSkip: {
-    marginTop: 40,
-    padding: 16,
-  },
-  webSkipText: {
-    fontSize: 28,
-    color: "#6B6354",
   },
 });

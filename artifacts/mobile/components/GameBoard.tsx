@@ -23,6 +23,13 @@ export interface ClearingCellAnim {
   color: string;
 }
 
+export interface FallingCellAnim {
+  fromRow: number;
+  toRow: number;
+  col: number;
+  color: string;
+}
+
 interface GhostCell {
   row: number;
   col: number;
@@ -35,8 +42,10 @@ interface Props {
   cellSize: number;
   placedCells?: PlacedCellAnim[];
   clearingCells?: ClearingCellAnim[];
+  fallingCells?: FallingCellAnim[];
 }
 
+// Scale-in overlay played briefly when a piece is placed
 function AnimatedPlacedCell({
   row,
   col,
@@ -79,6 +88,7 @@ function AnimatedPlacedCell({
   );
 }
 
+// Flash-gold-then-dissolve overlay for cleared rows/columns
 function AnimatedClearingCell({
   row,
   col,
@@ -124,12 +134,71 @@ function AnimatedClearingCell({
   );
 }
 
+// Gravity fall: cell springs from its old row position into the final board position
+function AnimatedFallingCell({
+  fromRow,
+  toRow,
+  col,
+  cellSize,
+  color,
+}: FallingCellAnim & { cellSize: number }) {
+  // translateY starts at the distance above the landing row, then springs to 0
+  const initialOffset = (fromRow - toRow) * cellSize;
+  const translateY = useSharedValue(initialOffset);
+
+  useEffect(() => {
+    translateY.value = withSpring(0, {
+      damping: 16,
+      stiffness: 180,
+      overshootClamping: false,
+    });
+  }, [translateY]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        {
+          position: "absolute",
+          top: toRow * cellSize,
+          left: col * cellSize,
+          width: cellSize,
+          height: cellSize,
+          backgroundColor: color,
+          borderRadius: 2,
+          zIndex: 5,
+          overflow: "hidden",
+        },
+        animStyle,
+      ]}
+    >
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "35%",
+          backgroundColor: "rgba(255,255,255,0.12)",
+          borderTopLeftRadius: 2,
+          borderTopRightRadius: 2,
+        }}
+      />
+    </Animated.View>
+  );
+}
+
 export default function GameBoard({
   board,
   ghostCells = [],
   cellSize,
   placedCells = [],
   clearingCells = [],
+  fallingCells = [],
 }: Props) {
   const ghostMap = new Map<string, boolean>();
   for (const g of ghostCells) {
@@ -137,6 +206,9 @@ export default function GameBoard({
       ghostMap.set(`${g.row},${g.col}`, g.isValid);
     }
   }
+
+  // Hide destination cells in the static board while a falling animation covers them
+  const fallingDestSet = new Set(fallingCells.map((fc) => `${fc.toRow},${fc.col}`));
 
   return (
     <View
@@ -150,6 +222,7 @@ export default function GameBoard({
           const key = `${row},${col}`;
           const color = board[row][col];
           const ghost = ghostMap.get(key);
+          const hiddenByFall = fallingDestSet.has(key);
 
           return (
             <View
@@ -157,18 +230,29 @@ export default function GameBoard({
               style={[
                 styles.cell,
                 { width: cellSize, height: cellSize },
-                color
+                color && !hiddenByFall
                   ? [styles.filled, { backgroundColor: color }]
                   : styles.empty,
                 ghost !== undefined &&
                   (ghost ? styles.ghostValid : styles.ghostInvalid),
               ]}
             >
-              {color && <View style={styles.cellHighlight} />}
+              {color && !hiddenByFall && <View style={styles.cellHighlight} />}
             </View>
           );
         })
       )}
+
+      {fallingCells.map((c) => (
+        <AnimatedFallingCell
+          key={`fall-${c.col}-${c.fromRow}`}
+          fromRow={c.fromRow}
+          toRow={c.toRow}
+          col={c.col}
+          color={c.color}
+          cellSize={cellSize}
+        />
+      ))}
 
       {placedCells.map((c) => (
         <AnimatedPlacedCell
