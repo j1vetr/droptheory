@@ -51,6 +51,7 @@ import { GamePiece, generateThreePieces } from "@/utils/pieces";
 const BEST_SCORE_KEY = "drop_theory_best_score";
 const GAME_SAVE_KEY = "drop_theory_saved_game";
 const BOARD_PAD = 16;
+const FINGER_LIFT = 80;
 
 interface DragState {
   pieceIndex: number;
@@ -258,7 +259,7 @@ export default function GameScreen() {
       return;
     }
 
-    const { row, col } = getGridPos(px, py);
+    const { row, col } = getGridPos(px, py - FINGER_LIFT);
     if (
       !(row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE
         && isValidPlacement(currentBoard, piece.shape, row, col))
@@ -370,7 +371,7 @@ export default function GameScreen() {
               boardLayoutRef.current = { x: bx, y: by, cs: w / BOARD_SIZE };
             });
             const { pageX, pageY } = evt.nativeEvent;
-            const { row, col } = getGridPos(pageX, pageY);
+            const { row, col } = getGridPos(pageX, pageY - FINGER_LIFT);
             const valid =
               row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE
               && isValidPlacement(boardRef.current, piece.shape, row, col);
@@ -378,7 +379,7 @@ export default function GameScreen() {
           },
           onPanResponderMove: (evt) => {
             const { pageX, pageY } = evt.nativeEvent;
-            const { row, col } = getGridPos(pageX, pageY);
+            const { row, col } = getGridPos(pageX, pageY - FINGER_LIFT);
             const piece = piecesRef.current[idx];
             if (!piece) return;
             const valid =
@@ -502,7 +503,7 @@ export default function GameScreen() {
         <FloatingPiece
           piece={dragState.piece}
           pageX={dragState.pageX}
-          pageY={dragState.pageY}
+          pageY={dragState.pageY - FINGER_LIFT}
           cellSize={cellSize}
           isValid={dragState.isValid}
         />
