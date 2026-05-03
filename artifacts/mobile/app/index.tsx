@@ -10,7 +10,7 @@ export default function SplashScreen() {
   const goNext = () => {
     if (finishedRef.current) return;
     finishedRef.current = true;
-    router.replace("/menu");
+    router.replace("/game");
   };
 
   useEffect(() => {
