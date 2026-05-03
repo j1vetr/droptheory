@@ -84,13 +84,13 @@ function AnimatedPlacedCell({
   cellSize,
   color,
 }: PlacedCellAnim & { cellSize: number }) {
-  const scale = useSharedValue(0.85);
+  const scale = useSharedValue(0.88);
 
   useEffect(() => {
-    scale.value = withSequence(
-      withTiming(1.06, { duration: 110, easing: Easing.out(Easing.quad) }),
-      withTiming(1, { duration: 90, easing: Easing.out(Easing.quad) })
-    );
+    scale.value = withTiming(1, {
+      duration: 160,
+      easing: Easing.out(Easing.cubic),
+    });
   }, [scale]);
 
   const animStyle = useAnimatedStyle(() => ({
@@ -434,6 +434,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "rgba(200,169,110,0.30)",
     padding: 6,
+    overflow: "hidden",
   },
   board: {
     flexDirection: "row",

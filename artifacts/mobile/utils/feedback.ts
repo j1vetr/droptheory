@@ -86,7 +86,6 @@ export function fxToggle() {
 
 export function fxPlace() {
   if (hapticOn) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  playSound("place");
 }
 
 export function fxInvalid() {
