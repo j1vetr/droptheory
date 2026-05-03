@@ -1,0 +1,19 @@
+Mevcut Drop Theory oyunundaki blok/kutucuk tasarımını iyileştirmeni istiyorum. Şu an bloklar fazla düz, soluk ve cansız görünüyor. Blokların daha kaliteli bir mobil puzzle oyunundaki gibi dokunsal, renkli, hacimli ve tatmin edici görünmesini istiyorum. Lütfen oyun mekaniğini değiştirme, sadece blokların görsel stilini ve ilgili küçük animasyon/efektlerini iyileştir.
+
+Bloklar flat renkli kareler gibi görünmemeli. Her blok, premium board game taşı veya cilalı puzzle taşı gibi hissettirmeli. Neon, cyberpunk veya aşırı parlak efekt istemiyorum. Bunun yerine canlı ama yumuşak, premium renkler kullan. Renkler daha belirgin ve enerjik olsun ama göz yormasın. Örnek renk paleti olarak şu tonları kullanabilirsin: mavi için #5DADE2, turkuaz için #45C4B0, yeşil için #7FB77E, amber/sarı için #F2B84B, coral/kırmızı için #E76F61, mor/lavanta için #9B6ADE.
+
+Her blok hücresinde şu görsel yapı olsun: köşeler daha yuvarlak olmalı, arka plan tek düz renk olmamalı, çok hafif dikey veya diagonal gradient kullanılmalı, üst-sol tarafta daha açık bir highlight hissi olmalı, alt-sağ tarafta daha koyu bir gölge hissi olmalı. Böylece bloklar hafif 3D, kabarık ve dokunulabilir görünmeli. Blokların üst kısmında çok hafif iç parlama veya highlight olabilir ama neon glow gibi dışarı taşan parlama istemiyorum.
+
+Blokların kenarlarında çok ince ve yarı saydam bir border kullan. Border, blok renginin daha açık tonu gibi olabilir. Her blokta yumuşak shadow olmalı, özellikle grid üzerinde bloklar birbirinden ayrışmalı. Shadow fazla ağır olmasın ama blokların zeminden hafif yukarıda durduğu hissini versin.
+
+Grid içindeki bloklarla alt parça kartlarındaki bloklar aynı tasarım sistemine sahip olmalı. Alt parça preview alanındaki bloklar da aynı gradient, radius, border ve shadow yapısını kullanmalı. Şu an preview parçaları da soluk duruyor; onları da daha canlı, daha değerli ve daha oyun objesi gibi göster.
+
+Blok boyutlarına göre radius oranlı çalışsın. Küçük bloklarda radius çok fazla olmasın, büyük görünümde ise daha yumuşak köşeli olabilir. Örneğin hücre boyutunun yaklaşık %18-22’si kadar border radius kullan. Bloklar arasında çok küçük bir boşluk kalsın ki her blok tek tek okunabilsin. Bloklar birbirine yapışık ve düz bir şerit gibi görünmesin.
+
+Yerleştirme animasyonunda bloklar grid’e geldiğinde hafif scale-in veya snap efekti olsun. Satır/sütun temizlenirken bloklar aniden kaybolmasın; hafif scale down + fade out + yumuşak pop animasyonu ile temizlensin. Gravity sırasında düşen bloklar doğal easing ile insin ve yere oturduğunda çok hafif bounce yapsın. Bu animasyonlar abartılı olmasın ama blokların fiziksel ve tatmin edici hissetmesini sağlasın.
+
+Teknik olarak mümkünse blok çizimini tek bir reusable component haline getir. Örneğin Tile veya BlockCell component oluştur. Bu component şu propsları alabilir: color, size, isPreview, isGhost, isClearing, isDragging. Tüm grid blokları ve preview blokları bu componenti kullansın. Böylece tasarım tutarlı olur ve ileride renk/stil değiştirmek kolaylaşır.
+
+Ghost preview için de aynı blok tasarımının daha şeffaf ve daha yumuşak versiyonunu kullan. Geçerli yerleşimde ghost bloklar blok renginin %35-45 opacity halini kullansın. Geçersiz yerleşimde agresif kırmızı yapmak yerine opacity düşsün ve küçük shake animasyonu olsun.
+
+Özetle istediğim şey: bloklar daha canlı, daha hacimli, daha dokunsal, daha premium ve daha oyun gibi görünsün. Flat, soluk, cansız karelerden uzaklaş. Neon veya ucuz parlama kullanmadan, yumuşak gradient, highlight, border, shadow ve küçük animasyonlarla blokları kaliteli puzzle taşlarına dönüştür.
