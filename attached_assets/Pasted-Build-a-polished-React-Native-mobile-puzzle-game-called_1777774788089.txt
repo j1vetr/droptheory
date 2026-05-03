@@ -1,0 +1,98 @@
+Build a polished React Native mobile puzzle game called “Drop Theory”.
+
+The game must support both Turkish and English languages. Add a simple language system with two options: Turkish and English. The player should be able to switch language from the settings screen. All UI texts, buttons, game messages, combo labels, score labels, game over screen, tutorial texts, and menu texts must be translated.
+
+Default language can be detected from the device language. If the device language is Turkish, open the game in Turkish. Otherwise, open the game in English.
+
+Game concept:
+Drop Theory is a minimalist gravity-based puzzle game played on an 8x8 grid. At the bottom of the screen, the player receives three different block pieces. The player drags and drops these pieces onto the grid. The goal is to complete full rows or columns and clear them.
+
+The unique mechanic is gravity. After a row or column is cleared, all remaining blocks above empty spaces must fall downward naturally until they settle. After gravity resolves, the board must be checked again. If the falling blocks complete new rows or columns, those lines must also clear automatically, creating cascade combos and higher scores.
+
+The player should not only think about the current placement, but also predict how the board will transform after gravity resolves.
+
+Core gameplay requirements:
+- 8x8 grid-based board
+- Three draggable block pieces at the bottom
+- Touch-friendly drag and drop controls
+- Ghost preview while dragging pieces
+- Valid and invalid placement feedback
+- Row and column clearing
+- Gravity simulation after every clear
+- Automatic cascade detection after gravity settles
+- Combo scoring system
+- Game over when none of the available pieces can fit anywhere on the board
+- Restart game option
+- Current score and best score display
+- Settings screen with language switcher
+- English and Turkish language support
+- Smooth animations for placing blocks, clearing lines, falling blocks, and combo feedback
+
+Scoring:
+- Placing blocks gives small points
+- Clearing a row or column gives higher points
+- Multiple lines cleared in one move give bonus points
+- Gravity-based cascade clears increase combo multiplier
+- Display combo text such as:
+  English: “Cascade x2”, “Cascade x3”, “Perfect Drop”
+  Turkish: “Zincir x2”, “Zincir x3”, “Kusursuz Düşüş”
+
+Suggested UI texts:
+
+English:
+- Play
+- Continue
+- Restart
+- Settings
+- Language
+- Turkish
+- English
+- Score
+- Best
+- Game Over
+- No available moves
+- Try Again
+- Drop Theory
+- Cascade
+- Perfect Drop
+- New Best Score
+- Drag the pieces onto the board
+- Clear full rows or columns
+- Gravity can create chain reactions
+
+Turkish:
+- Oyna
+- Devam Et
+- Yeniden Başlat
+- Ayarlar
+- Dil
+- Türkçe
+- İngilizce
+- Skor
+- En İyi
+- Oyun Bitti
+- Uygun hamle kalmadı
+- Tekrar Dene
+- Drop Theory
+- Zincir
+- Kusursuz Düşüş
+- Yeni Rekor
+- Parçaları tahtaya sürükle
+- Tam satırları veya sütunları temizle
+- Yerçekimi zincirleme reaksiyonlar oluşturabilir
+
+Visual design:
+Use a Quiet Luxury aesthetic. The game should feel premium, calm, minimal, and elegant. Avoid cartoonish colors, excessive effects, and visual clutter. Use a deep dark background, subtle grid lines, soft shadows, refined gradients, champagne gold accents, muted emerald or navy block colors, and smooth micro-interactions. The design should feel like a premium Apple Arcade puzzle game.
+
+Animation style:
+- Smooth but not childish
+- Blocks should fall with natural easing
+- Cleared lines should dissolve or softly fade out
+- Combos should feel satisfying but elegant
+- Use subtle haptic feedback where possible
+
+Game feel:
+The game should be easy to understand but hard to master. Every move should feel meaningful. The gravity mechanic should create strategic depth and satisfying chain reactions.
+
+Important:
+Write clean, maintainable React Native code. Keep the game logic separated from UI components. Create a simple translation object for Turkish and English texts. Make it easy to add more languages later.
