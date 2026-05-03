@@ -7,6 +7,7 @@ import React, { useCallback, useState } from "react";
 import {
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -166,8 +167,13 @@ export default function MenuScreen() {
         <Ionicons name="settings-outline" size={18} color="#C8A96E" />
       </Pressable>
 
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
       <View style={styles.hero}>
-        <Text style={styles.eyebrow}>PUZZLE · GRAVITY · COMBO</Text>
+        <Text style={styles.eyebrow}>{t.eyebrow.toUpperCase()}</Text>
         <Text style={styles.title}>DROP{"\n"}THEORY</Text>
         <Text style={styles.tagline}>{t.tagline}</Text>
         <View style={styles.heroPreviewWrap}>
@@ -223,6 +229,7 @@ export default function MenuScreen() {
           </TouchableOpacity>
         )}
       </View>
+      </ScrollView>
     </View>
   );
 }
@@ -231,10 +238,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#111118",
+    overflow: "hidden",
+  },
+  scrollContent: {
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 28,
-    overflow: "hidden",
+    gap: 24,
   },
   settingsBtn: {
     position: "absolute",
@@ -251,8 +262,8 @@ const styles = StyleSheet.create({
   },
   hero: {
     alignItems: "center",
-    marginTop: 56,
-    gap: 10,
+    marginTop: 48,
+    gap: 8,
   },
   eyebrow: {
     fontSize: 9,
@@ -279,7 +290,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   heroPreviewWrap: {
-    marginTop: 18,
+    marginTop: 14,
     alignItems: "center",
   },
   miniBoard: {

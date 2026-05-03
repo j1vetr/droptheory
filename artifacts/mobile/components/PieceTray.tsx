@@ -1,5 +1,5 @@
 import React from "react";
-import { PanResponder, Platform, StyleSheet, View } from "react-native";
+import { PanResponder, Platform, StyleSheet, Text, View } from "react-native";
 
 import { GamePiece, getPieceBounds } from "@/utils/pieces";
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const TRAY_CELL_SCALE = 0.6;
-export const TRAY_HEIGHT = 148;
+export const TRAY_HEIGHT = 168;
 
 const slotShadow = Platform.select({
   ios: {
@@ -110,21 +110,39 @@ export default function PieceTray({
       {[0, 1, 2].map((idx) => {
         const piece = pieces[idx];
         const handlers = panHandlers[idx];
+        const consumed = !piece;
         return (
-          <View
-            key={idx}
-            style={[styles.slot, slotShadow]}
-            {...(handlers && piece ? handlers : {})}
-          >
-            {piece ? (
-              <PiecePreview
-                piece={piece}
-                cellSize={cellSize}
-                dimmed={draggingIndex === idx}
+          <View key={idx} style={styles.column}>
+            <View
+              style={[styles.slot, slotShadow, consumed && styles.slotConsumed]}
+              {...(handlers && piece ? handlers : {})}
+            >
+              {piece ? (
+                <PiecePreview
+                  piece={piece}
+                  cellSize={cellSize}
+                  dimmed={draggingIndex === idx}
+                />
+              ) : (
+                <View style={styles.emptyDot} />
+              )}
+            </View>
+            <View style={styles.slotLabel}>
+              <View
+                style={[
+                  styles.slotPip,
+                  consumed && styles.slotPipConsumed,
+                ]}
               />
-            ) : (
-              <View style={styles.emptyDot} />
-            )}
+              <Text
+                style={[
+                  styles.slotIndex,
+                  consumed && styles.slotIndexConsumed,
+                ]}
+              >
+                {idx + 1}
+              </Text>
+            </View>
           </View>
         );
       })}
@@ -132,19 +150,26 @@ export default function PieceTray({
   );
 }
 
+const SLOT_HEIGHT = 130;
+
 const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     width: "100%",
     height: TRAY_HEIGHT,
     paddingHorizontal: 4,
     gap: 10,
   },
-  slot: {
+  column: {
     flex: 1,
-    height: TRAY_HEIGHT - 12,
+    alignItems: "center",
+    gap: 6,
+  },
+  slot: {
+    width: "100%",
+    height: SLOT_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255,255,255,0.035)",
@@ -154,6 +179,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 6,
   },
+  slotConsumed: {
+    backgroundColor: "rgba(255,255,255,0.018)",
+    borderColor: "rgba(255,255,255,0.05)",
+  },
   emptyDot: {
     width: 26,
     height: 26,
@@ -161,5 +190,29 @@ const styles = StyleSheet.create({
     borderWidth: 1.2,
     borderColor: "rgba(255,255,255,0.10)",
     borderStyle: "dashed",
+  },
+  slotLabel: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingTop: 2,
+  },
+  slotPip: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: "#B07E28",
+  },
+  slotPipConsumed: {
+    backgroundColor: "rgba(255,255,255,0.10)",
+  },
+  slotIndex: {
+    fontSize: 9,
+    fontFamily: "Inter_600SemiBold",
+    color: "#7A7266",
+    letterSpacing: 2,
+  },
+  slotIndexConsumed: {
+    color: "rgba(122,114,102,0.4)",
   },
 });

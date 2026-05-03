@@ -27,6 +27,7 @@ export interface Translations {
   notFound: string;
   goHome: string;
   tagline: string;
+  eyebrow: string;
 }
 
 const en: Translations = {
@@ -56,6 +57,7 @@ const en: Translations = {
   notFound: "This screen doesn't exist.",
   goHome: "Go to home screen",
   tagline: "Think before it falls",
+  eyebrow: "Puzzle · Gravity · Combo",
 };
 
 const tr: Translations = {
@@ -85,6 +87,7 @@ const tr: Translations = {
   notFound: "Bu ekran mevcut değil.",
   goHome: "Ana ekrana git",
   tagline: "Düşmeden önce düşün",
+  eyebrow: "Bulmaca · Yerçekimi · Kombo",
 };
 
 export const translations: Record<Language, Translations> = { en, tr };
