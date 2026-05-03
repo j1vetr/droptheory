@@ -486,7 +486,7 @@ export default function GameScreen() {
       )}
 
       {scorePopups.map((p) => (
-        <ScorePopup key={p.id} x={p.x} y={p.y} value={p.value} />
+        <ScorePopup key={p.id} id={p.id} x={p.x} y={p.y} value={p.value} />
       ))}
 
       <ComboFeedback text={comboText} />

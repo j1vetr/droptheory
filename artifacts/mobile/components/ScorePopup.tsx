@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Animated, Platform, StyleSheet, Text } from "react-native";
 
 interface Props {
+  id: number;
   x: number;
   y: number;
   value: number;
