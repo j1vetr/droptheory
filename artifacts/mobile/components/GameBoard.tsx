@@ -9,6 +9,7 @@ import Animated, {
 import React, { useEffect } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 
+import PuffyBlock from "@/components/PuffyBlock";
 import { BOARD_SIZE, Board } from "@/utils/gameEngine";
 
 export interface PlacedCellAnim {
@@ -97,36 +98,12 @@ function AnimatedPlacedCell({
           left: col * cellSize,
           width: cellSize,
           height: cellSize,
-          backgroundColor: color,
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: "rgba(0,0,0,0.32)",
           zIndex: 10,
-          overflow: "hidden",
         },
         animStyle,
       ]}
     >
-      <View
-        style={{
-          position: "absolute",
-          top: 0, left: 0, right: 0,
-          height: "44%",
-          backgroundColor: "rgba(255,255,255,0.36)",
-          borderTopLeftRadius: 7,
-          borderTopRightRadius: 7,
-        }}
-      />
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0, left: 0, right: 0,
-          height: "28%",
-          backgroundColor: "rgba(0,0,0,0.42)",
-          borderBottomLeftRadius: 7,
-          borderBottomRightRadius: 7,
-        }}
-      />
+      <PuffyBlock color={color} size={cellSize} />
     </Animated.View>
   );
 }
@@ -217,36 +194,12 @@ function AnimatedFallingCell({
           left: col * cellSize,
           width: cellSize,
           height: cellSize,
-          backgroundColor: color,
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: "rgba(0,0,0,0.32)",
           zIndex: 5,
-          overflow: "hidden",
         },
         animStyle,
       ]}
     >
-      <View
-        style={{
-          position: "absolute",
-          top: 0, left: 0, right: 0,
-          height: "44%",
-          backgroundColor: "rgba(255,255,255,0.36)",
-          borderTopLeftRadius: 7,
-          borderTopRightRadius: 7,
-        }}
-      />
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0, left: 0, right: 0,
-          height: "28%",
-          backgroundColor: "rgba(0,0,0,0.42)",
-          borderBottomLeftRadius: 7,
-          borderBottomRightRadius: 7,
-        }}
-      />
+      <PuffyBlock color={color} size={cellSize} />
     </Animated.View>
   );
 }
@@ -408,18 +361,15 @@ export default function GameBoard({
                 style={[
                   styles.cell,
                   { width: cellSize, height: cellSize },
-                  color && !hiddenByFall && !hiddenByClear
-                    ? [styles.filled, { backgroundColor: color }]
-                    : styles.empty,
+                  (!color || hiddenByFall || hiddenByClear) && styles.empty,
                   ghost !== undefined &&
                     (ghost ? styles.ghostValid : styles.ghostInvalid),
                 ]}
               >
                 {color && !hiddenByFall && !hiddenByClear && (
-                  <>
-                    <View style={styles.cellHighlight} />
-                    <View style={styles.cellShadow} />
-                  </>
+                  <View style={StyleSheet.absoluteFill}>
+                    <PuffyBlock color={color} size={cellSize} />
+                  </View>
                 )}
               </View>
             );
@@ -494,33 +444,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 4,
   },
-  filled: {
-    borderColor: "rgba(0,0,0,0.32)",
-    borderRadius: 8,
-    borderWidth: 1,
-  },
   empty: {
     backgroundColor: "rgba(255,255,255,0.025)",
-  },
-  cellHighlight: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: "44%",
-    backgroundColor: "rgba(255,255,255,0.36)",
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
-  },
-  cellShadow: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: "28%",
-    backgroundColor: "rgba(0,0,0,0.42)",
-    borderBottomLeftRadius: 7,
-    borderBottomRightRadius: 7,
   },
   ghostValid: {
     backgroundColor: "rgba(176,126,40,0.32)",

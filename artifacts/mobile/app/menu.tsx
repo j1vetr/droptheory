@@ -16,6 +16,7 @@ import {
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import PuffyBlock from "@/components/PuffyBlock";
 import { useLanguage } from "@/context/LanguageContext";
 
 const GAME_SAVE_KEY = "drop_theory_saved_game";
@@ -64,44 +65,6 @@ const HERO_LAYOUT: (string | null)[][] = [
 
 const HERO_CELL = 30;
 
-function PuffyTile({ color, size }: { color: string; size: number }) {
-  const radius = Math.max(5, size * 0.22);
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        backgroundColor: color,
-        borderRadius: radius,
-        borderWidth: 1,
-        borderColor: "rgba(0,0,0,0.32)",
-        overflow: "hidden",
-      }}
-    >
-      <View
-        style={{
-          position: "absolute",
-          top: 0, left: 0, right: 0,
-          height: "44%",
-          backgroundColor: "rgba(255,255,255,0.36)",
-          borderTopLeftRadius: radius - 1,
-          borderTopRightRadius: radius - 1,
-        }}
-      />
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0, left: 0, right: 0,
-          height: "28%",
-          backgroundColor: "rgba(0,0,0,0.42)",
-          borderBottomLeftRadius: radius - 1,
-          borderBottomRightRadius: radius - 1,
-        }}
-      />
-    </View>
-  );
-}
-
 function HeroMiniBoard() {
   const cs = HERO_CELL;
   const rows = HERO_LAYOUT.length;
@@ -124,7 +87,7 @@ function HeroMiniBoard() {
                 }}
               >
                 {color ? (
-                  <PuffyTile color={color} size={cs - 4} />
+                  <PuffyBlock color={color} size={cs - 4} />
                 ) : (
                   <View
                     style={{
@@ -170,7 +133,7 @@ function DecorativeBlock({
         blockShadow,
       ]}
     >
-      <PuffyTile color={color} size={size} />
+      <PuffyBlock color={color} size={size} />
     </View>
   );
 }

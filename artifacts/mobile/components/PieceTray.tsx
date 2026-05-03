@@ -1,6 +1,7 @@
 import React from "react";
 import { PanResponder, Platform, StyleSheet, Text, View } from "react-native";
 
+import PuffyBlock from "@/components/PuffyBlock";
 import { GamePiece, getPieceBounds } from "@/utils/pieces";
 
 interface Props {
@@ -60,37 +61,9 @@ function PiecePreview({
                 height: cs,
                 left: c * cs,
                 top: r * cs,
-                backgroundColor: piece.color,
-                borderColor: "rgba(0,0,0,0.32)",
-                borderWidth: 1,
-                borderRadius: 7,
-                overflow: "hidden",
               }}
             >
-              <View
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: "44%",
-                  backgroundColor: "rgba(255,255,255,0.36)",
-                  borderTopLeftRadius: 6,
-                  borderTopRightRadius: 6,
-                }}
-              />
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: "28%",
-                  backgroundColor: "rgba(0,0,0,0.42)",
-                  borderBottomLeftRadius: 6,
-                  borderBottomRightRadius: 6,
-                }}
-              />
+              <PuffyBlock color={piece.color} size={cs} />
             </View>
           );
         })

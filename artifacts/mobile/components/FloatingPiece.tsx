@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
+import PuffyBlock from "@/components/PuffyBlock";
 import { GamePiece, getPieceBounds } from "@/utils/pieces";
 
 interface Props {
@@ -45,33 +46,9 @@ export default function FloatingPiece({ piece, pageX, pageY, cellSize, isValid }
                   top: r * cellSize,
                   width: cellSize - 1,
                   height: cellSize - 1,
-                  backgroundColor: piece.color,
-                  borderRadius: 9,
-                  borderWidth: 1,
-                  borderColor: "rgba(0,0,0,0.32)",
-                  overflow: "hidden",
                 }}
               >
-                <View
-                  style={{
-                    position: "absolute",
-                    top: 0, left: 0, right: 0,
-                    height: "44%",
-                    backgroundColor: "rgba(255,255,255,0.36)",
-                    borderTopLeftRadius: 8,
-                    borderTopRightRadius: 8,
-                  }}
-                />
-                <View
-                  style={{
-                    position: "absolute",
-                    bottom: 0, left: 0, right: 0,
-                    height: "28%",
-                    backgroundColor: "rgba(0,0,0,0.42)",
-                    borderBottomLeftRadius: 8,
-                    borderBottomRightRadius: 8,
-                  }}
-                />
+                <PuffyBlock color={piece.color} size={cellSize - 1} />
               </View>
             );
           })
