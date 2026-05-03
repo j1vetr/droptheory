@@ -39,3 +39,6 @@ yarn-error.*
 .vercel
 
 .env
+
+# EAS — yereldeki/sunucudaki kopyalar otomatik güncelleniyor, repoda tutmuyoruz
+eas.json
