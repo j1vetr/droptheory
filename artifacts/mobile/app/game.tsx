@@ -451,18 +451,14 @@ export default function GameScreen() {
 
         <View style={styles.scoreBanner}>
           <View style={styles.scoreSide}>
-            <View style={styles.scoreLabelRow}>
-              <Ionicons name="sparkles" size={10} color="#7A7266" />
-              <Text style={styles.scoreLabel}>{t.score}</Text>
-            </View>
+            <Text style={styles.scoreLabel}>{t.score}</Text>
+            <View style={styles.scoreAccent} />
             <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
           </View>
           <View style={styles.scoreDivider} />
           <View style={styles.scoreSide}>
-            <View style={styles.scoreLabelRow}>
-              <Ionicons name="trophy" size={11} color="#B07E28" />
-              <Text style={[styles.scoreLabel, styles.bestLabel]}>{t.best}</Text>
-            </View>
+            <Text style={[styles.scoreLabel, styles.bestLabel]}>{t.best}</Text>
+            <View style={[styles.scoreAccent, styles.bestAccent]} />
             <Text style={[styles.scoreValue, styles.bestValue]}>
               {bestScore.toLocaleString()}
             </Text>
@@ -559,20 +555,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     justifyContent: "space-around",
-    backgroundColor: "rgba(22,22,30,0.85)",
-    borderRadius: 14,
+    backgroundColor: "rgba(20,16,42,0.78)",
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(200,169,110,0.18)",
-    paddingVertical: 8,
+    borderColor: "rgba(200,169,110,0.22)",
+    paddingVertical: 10,
     paddingHorizontal: 6,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.35,
-        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.4,
+        shadowRadius: 14,
       },
-      android: { elevation: 6 },
+      android: { elevation: 8 },
       default: {},
     }),
   },
@@ -581,36 +577,45 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 4,
+    gap: 4,
   },
   scoreDivider: {
     width: 1,
-    backgroundColor: "rgba(200,169,110,0.20)",
-    marginVertical: 4,
-  },
-  scoreLabelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    marginBottom: 2,
+    backgroundColor: "rgba(200,169,110,0.22)",
+    marginVertical: 6,
   },
   scoreLabel: {
-    fontSize: 9,
+    fontSize: 10,
     fontFamily: "Inter_600SemiBold",
-    color: "#7A7266",
-    letterSpacing: 2.2,
+    color: "#9A9180",
+    letterSpacing: 3,
     textTransform: "uppercase",
   },
   bestLabel: {
-    color: "#B07E28",
+    color: "#C8A96E",
+  },
+  scoreAccent: {
+    width: 18,
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: "rgba(154,145,128,0.45)",
+  },
+  bestAccent: {
+    backgroundColor: "#C8A96E",
+    shadowColor: "#C8A96E",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 4,
   },
   scoreValue: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: "Inter_700Bold",
-    color: "#F0EDE8",
-    letterSpacing: 0.3,
+    color: "#F4F1EA",
+    letterSpacing: 0.5,
+    marginTop: 2,
   },
   bestValue: {
-    color: "#D4A83A",
+    color: "#E8C870",
   },
   boardWrapper: {
     ...Platform.select({
