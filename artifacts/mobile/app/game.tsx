@@ -31,6 +31,7 @@ import GameBoard, {
 } from "@/components/GameBoard";
 import GameOverModal from "@/components/GameOverModal";
 import PieceTray, { TRAY_HEIGHT } from "@/components/PieceTray";
+import PlacementSparks, { type PlacementBurst } from "@/components/PlacementSparks";
 import ScorePopup from "@/components/ScorePopup";
 import { useLanguage } from "@/context/LanguageContext";
 import {
@@ -147,6 +148,8 @@ export default function GameScreen() {
     { id: number; x: number; y: number; value: number }[]
   >([]);
   const popupIdRef = useRef(0);
+  const [placementBursts, setPlacementBursts] = useState<PlacementBurst[]>([]);
+  const placementBurstIdRef = useRef(0);
 
   const boardViewRef = useRef<View>(null);
   const boardLayoutRef = useRef({ x: 0, y: 0, cs: cellSize });
@@ -304,15 +307,21 @@ export default function GameScreen() {
       color: piece.color,
     }));
     setPlacedCells(placedAnims);
-    setParticleBursts(
-      placedAnims.map((c) => ({
-        row: c.row,
-        col: c.col,
-        color: c.color,
-        intensity: 0.35,
-      }))
-    );
-    setTimeout(() => setParticleBursts([]), 360);
+
+    const { x: bx, y: by, cs } = boardLayoutRef.current;
+    const burstId = ++placementBurstIdRef.current;
+    const newBursts = placedAnims.map((c, i) => ({
+      id: burstId * 100 + i,
+      x: bx + c.col * cs + cs / 2,
+      y: by + c.row * cs + cs / 2,
+      color: c.color,
+      cellSize: cs,
+    }));
+    setPlacementBursts((prev) => [...prev, ...newBursts]);
+    const burstIds = new Set(newBursts.map((b) => b.id));
+    setTimeout(() => {
+      setPlacementBursts((prev) => prev.filter((b) => !burstIds.has(b.id)));
+    }, 700);
 
     const newPiecesArr = [...currentPieces] as (GamePiece | null)[];
     newPiecesArr[idx] = null;
@@ -469,6 +478,7 @@ export default function GameScreen() {
     setClearingCells([]);
     setFallingCells([]);
     setParticleBursts([]);
+    setPlacementBursts([]);
     gamePhaseRef.current = "idle";
   }, [clearSave]);
 
@@ -548,6 +558,8 @@ export default function GameScreen() {
           isValid={dragState.isValid}
         />
       )}
+
+      <PlacementSparks bursts={placementBursts} />
 
       {scorePopups.map((p) => (
         <ScorePopup key={p.id} id={p.id} x={p.x} y={p.y} value={p.value} />
