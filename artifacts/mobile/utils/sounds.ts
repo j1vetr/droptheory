@@ -1,13 +1,12 @@
 import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from "expo-audio";
 
-type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back" | "toggle" | "button" | "score" | "cancel" | "wrong" | "pickup";
+type SoundName = "place" | "clear" | "combo" | "gameover" | "back" | "toggle" | "button" | "score" | "cancel" | "wrong" | "pickup";
 
 const SOURCES: Record<SoundName, number> = {
   place: require("../assets/sounds/place.mp3"),
   clear: require("../assets/sounds/clear.wav"),
   combo: require("../assets/sounds/combo.mp3"),
   gameover: require("../assets/sounds/gameover.wav"),
-  best: require("../assets/sounds/best.mp3"),
   back: require("../assets/sounds/back.mp3"),
   toggle: require("../assets/sounds/toggle.mp3"),
   button: require("../assets/sounds/button.mp3"),
@@ -19,6 +18,10 @@ const SOURCES: Record<SoundName, number> = {
 
 const POOL_SIZE: Partial<Record<SoundName, number>> = {
   clear: 4,
+};
+
+const VOLUME: Partial<Record<SoundName, number>> = {
+  place: 0.35,
 };
 
 const players: Partial<Record<SoundName, AudioPlayer[]>> = {};
@@ -126,6 +129,8 @@ export function playSound(name: SoundName) {
     const p = pool[idx % pool.length];
     cursor[name] = (idx + 1) % pool.length;
     try {
+      const vol = VOLUME[name];
+      if (vol !== undefined) p.volume = vol;
       p.seekTo(0);
       p.play();
     } catch {

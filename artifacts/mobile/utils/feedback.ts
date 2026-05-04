@@ -63,7 +63,7 @@ export async function setHapticPref(value: boolean) {
   }
 }
 
-type SoundName = "place" | "clear" | "combo" | "gameover" | "best" | "back" | "toggle" | "button" | "score" | "cancel" | "wrong" | "pickup";
+type SoundName = "place" | "clear" | "combo" | "gameover" | "back" | "toggle" | "button" | "score" | "cancel" | "wrong" | "pickup";
 
 export function fxButton() {
   if (hapticOn) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -86,6 +86,7 @@ export function fxToggle() {
 
 export function fxPlace() {
   if (hapticOn) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  playSound("place");
 }
 
 export function fxInvalid() {
