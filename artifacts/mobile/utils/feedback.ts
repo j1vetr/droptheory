@@ -134,7 +134,7 @@ export function fxGameOver(isNewBest: boolean) {
         : Haptics.NotificationFeedbackType.Error
     );
   }
-  playSound(isNewBest ? "best" : "gameover");
+  playSound("gameover");
 }
 
 export function playFx(name: SoundName) {
